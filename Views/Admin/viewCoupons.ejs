@@ -1,0 +1,287 @@
+<%- include('../adminLayouts/header.ejs') %>
+
+<section>
+    <div class="container">
+      <div class="d-flex justify-content-between">
+          <h4 style="color: #0e382e;"><b>Coupon Details</b></h4>
+          <button data-toggle="modal" data-target="#newcoupon" type="button" class="btn add-new" style="background-color: #0e382e;color: white;border-radius: 6px;"><i class="fa fa-plus"></i> Add New Coupon</button>
+      </div>
+        <table class="table mt-2">
+            <thead style="border-bottom: solid #0e382e;border-top: solid #0e382e ">
+              <tr style="color: #0e382e;font-weight: bolder;">
+                <th scope="col">No</th>
+                <th scope="col">Code Name</th>
+                <th scope="col">Percentage</th>
+                <th scope="col">Maximum discount</th>
+                <th scope="col">Minimum amount</th>
+                <th scope="col">Expire date</th>
+                <th scope="col">Status</th>
+                <th scope="col">Action</th>
+              </tr>
+            </thead>
+            <tbody>
+                <% let i=1%>
+                <% coupons.forEach(coupon=>{%>
+                    <tr >
+                        <td style="color: #0e382e"><%= i++ %></td>
+                        <td style="color: #0e382e"><%=coupon.couponName%></td>
+                        <td style="color: #0e382e"><%=coupon.percentage%>%</td>
+                        <td style="color: #0e382e">&#8377;<%=coupon.maxDiscount%></td>
+                        <td style="color: #0e382e">&#8377;<%=coupon.minAmount%></td>
+                        <td style="color: #0e382e"><%=coupon.expireDate.toLocaleDateString()%></td>
+                        <%if(coupon.status===0){%>
+                          <td class="text-success">Listed</td>
+                        <%}else{%>
+                          <td class="text-danger">Unlisted</td>
+                        <%}%>                            
+                        <td style="color: #0e382e">
+                          <button data-toggle="modal" data-target="#edit<%=coupon._id%>"><i class="fa-solid fa-pen" style="color: #0e382e;"></i></button>
+                          <%if(coupon.status===0){%>
+                            <button data-toggle="modal" data-target="#delete<%=coupon._id %>"><i class="fa-solid fa-ban" style="color: hsl(0, 75%, 46%);"></i></button>
+                          <%}else{%>
+                            <button data-toggle="modal" data-target="#delete<%=coupon._id %>"><i class="fa-solid fa-ban" style="color: hsl(129, 75%, 46%);"></i></button>
+                          <%}%>
+                          
+                        </td>
+                        <div class="modal" id="delete<%= coupon._id %>" role="dialog" aria-labelledby="exampleModalLabel" aria-hidden="true">
+                          <div class="modal-dialog" role="document">
+                            <div class="modal-content">
+                              <div class="modal-body">
+                                <%if(coupon.status===0){%>
+                                  <p class="text-danger text-center">Are sure to unlist the coupon?.</p>
+                                <%}else{%>
+                                  <p class="text-danger text-center">Are sure to list the coupon?.</p>
+                                <%}%>                                    
+                              </div>
+                              <div class="modal-footer justify-content-center">
+                                <%if(coupon.status===0){%>
+                                  <a href="/admin/listCoupon/<%= coupon._id %>"><button type="button" class="btn btn-danger">Unlist coupon</button></a>
+                                <%}else{%>
+                                  <a href="/admin/listCoupon/<%= coupon._id %>"><button type="button" class="btn btn-success">List coupon</button></a>
+                                <%}%>                             
+                                <button type="button" class="btn btn-primary" data-dismiss="modal">Close</button>
+                              </div>
+                            </div>
+                          </div>
+                        </div>
+                      </tr>
+                      <div class="modal" id="edit<%=coupon._id%>" role="dialog" aria-labelledby="exampleModalLabel" aria-hidden="true" >
+                        <div class="modal-dialog" role="document">
+                          <div class="modal-content"  style="width: 100%px;">
+                            <div class="modal-body" >
+                              <div class="container mt-1" >
+                                <div class="container mt-4">
+                                  <div class="row">
+                                      <div class="col-md-12">
+                                          <h2 class="text-center">Edit Coupon</h2>
+                                          <form  action="/admin/editCoupon/<%=coupon._id%>" method="post" onsubmit="return validateForm('<%= coupon._id %>')">
+                                              <label for="">Code Name</label>
+                                              <input id="name<%= coupon._id %>" type="text" name="couponName" class="form-control" value="<%=coupon.couponName%>">
+                                              <p style="color: red;" id="error-name<%= coupon._id %>"></p>
+                                              <label for="">Percentage</label>
+                                              <input id="percentage<%= coupon._id %>" type="number" name="percentage"class="form-control" value="<%=coupon.percentage%>">
+                                              <p style="color: red;" id="error-percentage<%= coupon._id %>"></p>
+                                              <label  for="">Maximum discount</label>
+                                              <input id="maxDiscount<%= coupon._id %>"  type="number" name="maxDiscount" class="form-control" value="<%=coupon.maxDiscount%>">
+                                              <p style="color: red;" id="error-maxDiscount<%= coupon._id %>"></p>
+                                              <label for="">Minimum amount</label>
+                                              <input id="minAmount<%= coupon._id %>" type="number" name="minAmount" class="form-control" value="<%=coupon.minAmount%>">
+                                              <p style="color: red;" id="error-minAmount<%= coupon._id %>"></p>
+                                              <label for="">Expire date</label>
+                                              <input id="expireDate<%= coupon._id %>" type="date" name="expireDate"class="form-control" value="<%=coupon.expireDate.toISOString().split('T')[0]%>">
+                                              <p style="color: red;" id="error-expireDate<%= coupon._id %>"></p>
+                                              <div class="text-center">
+                                                <button type="submit" class="btn btn-primary btn-lg mt-3">Submit</button>
+                                                <button type="button" class="btn btn-primary btn-lg mt-3" data-dismiss="modal">Close</button> 
+                                              </form>
+                                            </div>
+                                        </div>
+                                    </div>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                <%})%>
+            </tbody>
+        </table>
+        <div class="modal" id="newcoupon" role="dialog" aria-labelledby="exampleModalLabel" aria-hidden="true" >
+            <div class="modal-dialog" role="document">
+                <div class="modal-content"  style="width: 100%px;">
+                    <div class="modal-body" >
+                        <div class="container mt-1" >
+                            <div class="container mt-4">
+                                <div class="row">
+                                    <div class="col-md-12">
+                                        <h2 class="text-center">Add Coupon</h2>
+                                        <form action="/admin/addCoupon" method="post" id="addCouponForm">
+                                            <label for="couponName">Code Name</label>
+                                            <input type="text" name="couponName" id="couponName" class="form-control">
+                                            <p class="error-message error-couponName" style="color: red;"></p>
+                                          
+                                            <label for="percentage">Percentage</label>
+                                            <input type="number" name="percentage" id="percentage" class="form-control">
+                                            <p class="error-message error-percentage" style="color: red;"></p>
+                                          
+                                            <label for="maxDiscount">Maximum Discount</label>
+                                            <input type="number" name="maxDiscount" id="maxDiscount" class="form-control">
+                                            <p class="error-message error-maxDiscount" style="color: red;"></p>
+                                          
+                                            <label for="minAmount">Minimum Amount</label>
+                                            <input type="number" name="minAmount" id="minAmount" class="form-control">
+                                            <p class="error-message error-minAmount" style="color: red;"></p>
+                                          
+                                            <label for="expireDate">Expire Date</label>
+                                            <input type="date" name="expireDate" id="expireDate" class="form-control">
+                                            <p class="error-message error-expireDate" style="color: red;"></p>
+                                          
+                                            <div class="text-center">
+                                                <button type="submit" class="btn btn-primary btn-lg mt-1">Submit</button>
+                                                <button type="button" class="btn btn-primary btn-lg mt-1" data-dismiss="modal">Close</button> 
+                                            </div>
+                                        </form>
+                                      
+                                    </div>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>              
+        </div>
+        </section>
+        
+        <script>
+        document.addEventListener("DOMContentLoaded", function() {
+          const addCouponForm = document.getElementById('addCouponForm');
+          addCouponForm.addEventListener("submit", function(event) {
+            if (!validateAddCouponForm()) {
+              event.preventDefault(); 
+            }
+          });
+        });
+        
+        function validateAddCouponForm() {
+        let isValid = true;
+
+
+  const couponName = document.getElementById("couponName").value.trim();
+  const percentage = document.getElementById("percentage").value.trim();
+  const maxDiscount = document.getElementById("maxDiscount").value.trim();
+  const minAmount = document.getElementById("minAmount").value.trim();
+  const expireDate = document.getElementById("expireDate").value.trim();
+
+ 
+  const couponNameError = document.querySelector('.error-couponName');
+  const percentageError = document.querySelector('.error-percentage');
+  const maxDiscountError = document.querySelector('.error-maxDiscount');
+  const minAmountError = document.querySelector('.error-minAmount');
+  const expireDateError = document.querySelector('.error-expireDate');
+
+ 
+  couponNameError.innerText = "";
+  percentageError.innerText = "";
+  maxDiscountError.innerText = "";
+  minAmountError.innerText = "";
+  expireDateError.innerText = "";
+
+  
+  if (couponName === "") {
+    couponNameError.innerText = "Please enter Coupon Name";
+    isValid = false;
+  }
+
+
+  if (percentage === "") {
+    percentageError.innerText = "Please enter Percentage";
+    isValid = false;
+  } else if (parseFloat(percentage) <= 0) {
+    percentageError.innerText = "Percentage must be greater than 0";
+    isValid = false;
+  }
+
+
+  if (maxDiscount === "") {
+    maxDiscountError.innerText = "Please enter Maximum Discount";
+    isValid = false;
+  } else if (parseFloat(maxDiscount) <= 0) {
+    maxDiscountError.innerText = "Maximum Discount must be greater than 0";
+    isValid = false;
+  }
+
+ 
+  if (minAmount === "") {
+    minAmountError.innerText = "Please enter Minimum Amount";
+    isValid = false;
+  } else if (parseFloat(minAmount) <= 0) {
+    minAmountError.innerText = "Minimum Amount must be greater than 0";
+    isValid = false;
+  }
+
+ 
+  if (expireDate === "") {
+    expireDateError.innerText = "Please select Expire Date";
+    isValid = false;
+  }
+
+  return isValid;
+}
+
+        
+function validateForm(couponId) {
+  const name = document.getElementById("name" + couponId).value;
+  const percentage = document.getElementById("percentage" + couponId).value;
+  const maxDiscount = document.getElementById("maxDiscount" + couponId).value;
+  const minAmount = document.getElementById("minAmount" + couponId).value;
+  const expireDate = document.getElementById("expireDate" + couponId).value;
+
+  let flag = true;
+
+  document.getElementById("error-name" + couponId).innerText = "";
+  document.getElementById("error-percentage" + couponId).innerText = "";
+  document.getElementById("error-maxDiscount" + couponId).innerText = ""; 
+  document.getElementById("error-minAmount" + couponId).innerText = "";
+  document.getElementById("error-expireDate" + couponId).innerText = "";
+
+  if (name === "") {
+    document.getElementById("error-name" + couponId).innerText = "Please enter Coupon Name";
+    flag = false;
+  }
+
+  if (percentage === "") {
+    document.getElementById("error-percentage" + couponId).innerText = "Please enter Percentage";
+    flag = false;
+  } else if (percentage <= 0) {
+    document.getElementById("error-percentage" + couponId).innerText = "Percentage cannot be negative";
+    flag = false;
+  }
+
+  if (maxDiscount === "") {
+    document.getElementById("error-maxDiscount" + couponId).innerText = "Please enter Maximum Discount"; 
+    flag = false;
+  } else if (maxDiscount <= 0) {
+    document.getElementById("error-maxDiscount" + couponId).innerText = "Maximum Discount cannot be negative";
+    flag = false;
+  }
+
+  if (minAmount === "") {
+    document.getElementById("error-minAmount" + couponId).innerText = "Please enter Minimum Amount";
+    flag = false;
+  } else if (minAmount <= 0) {
+    document.getElementById("error-minAmount" + couponId).innerText = "Minimum Amount cannot be negative";
+    flag = false;
+  }
+
+  if (expireDate === "") {
+    document.getElementById("error-expireDate" + couponId).innerText = "Please enter Expire Date";
+    flag = false;
+  }
+
+  return flag;
+}
+
+        </script>
+        
+        <%- include('../adminLayouts/actionResponse.ejs') %>            
+        <%- include('../adminLayouts/footer.ejs') %>
+        

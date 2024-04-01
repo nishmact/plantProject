@@ -1,0 +1,93 @@
+<%- include('../Layouts/header.ejs') %>
+<style media="screen">
+    figure.zoom {
+        background-position: 50% 50%;
+        position: relative;
+        margin: 50px auto;
+        border: 5px solid white;
+        box-shadow: -1px 5px 15px black;
+        height: 450px;
+        width: 500px;
+        overflow: hidden;
+        cursor: zoom-in;
+    }
+
+    figure.zoom img:hover {
+        opacity: 0;
+    }
+
+    figure.zoom img {
+        transition: opacity 0.5s;
+        display: block;
+        width: 100%;
+    }
+</style>
+
+<main>
+    <div class="container" style="margin-bottom: 20px; margin-top: 50px; background-color: white;">
+        <div class="row">
+            <div style="border: 1px solid gray; width: 700px; height: 700px; margin-bottom: 100px; background-color: white;">
+                <!-- Zoomed figure -->
+                <figure class="zoom" onmousemove="zoom(event)" style="background-image: url('<%=productData.image[0]%>'); width: 500px; margin-left: 85px; margin-top: 10px;">
+                    <img src="<%=productData.image[0]%>" style="width:100%; display:block;" />
+                </figure>
+                <!-- Thumbnails -->
+                <div style="display: flex; justify-content: center;">
+                    <% for(let i = 1; i < productData.image.length; i++) { %>
+                        <img src="<%=productData.image[i]%>" style="width: 100px; margin: 10px; box-shadow: -1px 5px 15px black; cursor: pointer;" onclick="updateZoomedImage('<%=productData.image[i]%>')"/>
+                    <% } %>
+                   
+                </div>
+            </div>
+
+            <div style="width: 500px; height: 400px; margin-left: 50px; margin-bottom: 100px; border-radius: 10px; background-color: white;">
+                <h2 style="color:black; font-size: 30px; font-weight: bold; margin-top: 20px; margin-left: 0px;"> <%=productData.name%></h2>
+                <h5 style="color: black; font-size: 17px;  margin-top: 10px; margin-left: 0px;">Category: <span style="margin-left: 50px; font-size: 15px;"><%=productData.category%></span> </h5>
+                <div>
+                    <hr>
+                    <%if(productData.quantity<=0){%>
+                        <h4 class="text-danger">Out of stock</h4>
+                    <%}else{%>
+                        <h6 class="text-success" id="deliveryDate"></h6>
+                    <%}%>
+                    <div class="offer">
+                        <span class="discounted-price" style="font-weight: bold; margin-right: 8px; font-size: 20px;">price: &#8377;<%= productData.discountedPrice %></span>
+                        <% if(productData.totalOffer > 0) { %>
+                         <span class="original-price" style="text-decoration: line-through; color: gray; margin-right: 8px; ">&#8377;<%= productData.price %></span>
+                         <span class="discount" style="color: green;"><%= productData.totalOffer %>% off</span>
+                         <% } %>
+                     </div>    
+                    <p style="color: rgb(14, 56, 44);"><%=productData.description%></p>
+                </div>
+
+                <%if(cartItem){%>
+                    <a href="/cart"><button style="margin-top: 30px;  margin-left: 0px; padding: 5px; width: 200px; border-radius: 20px; color: white; background-color:  rgb(14, 56, 44);">GO TO CART</button></a>
+                <%}else if(productData.quantity>0){%>
+                    <a href="/addToCart/<%=productData._id%>"><button style="margin-top: 30px;  margin-left: 0px; padding: 5px; width: 200px; border-radius: 20px; color: white; background-color:  rgb(14, 56, 44);">ADD TO CART</button></a> 
+                <%}else{%>
+                    <a href="/"><button style="margin-top: 30px;  margin-left: 0px; padding: 5px; width: 200px; border-radius: 20px; color: white; background-color:  rgb(14, 56, 44);">Back To Shopping</button></a>
+                <%}%>
+            </div>
+        </div>
+    </div>
+</main>
+
+<script>
+    // Function to update the zoomed image
+    function updateZoomedImage(imageUrl) {
+        const zoomedImage = document.querySelector('.zoom');
+        zoomedImage.style.backgroundImage = 'url(' + imageUrl + ')';
+    }
+
+    // Function for zoom effect
+    function zoom(e) {
+        var zoomer = e.currentTarget;
+        var offsetX = e.offsetX ? e.offsetX : (e.touches ? e.touches[0].clientX - zoomer.getBoundingClientRect().left : 0);
+        var offsetY = e.offsetY ? e.offsetY : (e.touches ? e.touches[0].clientY - zoomer.getBoundingClientRect().top : 0);
+        var x = offsetX / zoomer.offsetWidth * 100;
+        var y = offsetY / zoomer.offsetHeight * 100;
+        zoomer.style.backgroundPosition = x + '% ' + y + '%';
+    }
+</script>
+
+<%- include('../Layouts/footer.ejs') %>

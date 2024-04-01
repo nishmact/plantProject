@@ -1,0 +1,129 @@
+<%- include('../Layouts/header.ejs') %>
+<style>
+    .bi-trash {
+        font-size: 18px;
+         margin-left: 450px;
+    }
+    button {
+        background: none;
+        border: none;
+        padding: 0;
+        margin: 0;
+        font: inherit;
+        cursor: pointer;
+        outline: inherit;
+    }
+</style>
+<section style="background-color: #eee;">
+    <div class="container py-2">
+      <div class="row">
+        <div class="col">
+          <nav aria-label="breadcrumb" class="bg-light rounded-3 p-1 mb-2">
+            <h2 class="text-center" style="color: #0e382c;font-weight:600 ">My Wishlist</h2>
+          </nav>
+        </div>
+      </div>  
+      <div class="row">
+        <div class="col-lg-4">
+          <div class="card mb-2">
+            <div class="card-body text-center">
+              <img src="/image/profilepic.svg" alt="avatar"
+                class="rounded-circle img-fluid" style="width: 100px;">
+              <h5 class="my-3" id="profileName"><%=userData.name%></h5>
+              <p class="text-muted mb-1"><i class="fa-solid fa-envelope" style="color: #0e382c;"></i><%=userData.email%></p>
+            </div>
+          </div>
+          <div class="card mb-4 mb-lg-0">
+            <div class="card-body p-0">
+              <ul class="list-group list-group-flush rounded-3">
+                  <li class="list-group-item d-flex justify-content-center align-items-center p-3">
+                    <a href="/profile" style="text-decoration: none;"><p class="mb-0" id="personalDetails">Personal Details</p></a>
+                  </li>
+                  <li class="list-group-item d-flex justify-content-center align-items-center p-3">
+                      <a href="/address" style="text-decoration: none;"><p class="mb-0"id="addressDetails">Manage Addressess</p></a>
+                  </li>
+                  <li class="list-group-item d-flex justify-content-center align-items-center p-3">
+                    <a href="/orders" style="text-decoration: none;"><p class="mb-0" id="orderDetails">My Orders</p></a>
+                  </li>
+                  <li class="list-group-item d-flex justify-content-center align-items-center p-3">
+                    <a href="/wishlist" style="text-decoration: none;"><p class="mb-0" id="orderDetails">My Wishlist</p></a>
+                  </li>
+                  <li class="list-group-item d-flex justify-content-center align-items-center p-3">
+                    <a href="/wallet" style="text-decoration: none;"><p class="mb-0" id="orderDetails">My Wallet</p></a>
+                  </li>
+              </ul>
+            </div>
+          </div>
+        </div>
+        <div class="col-lg-8">
+          <% if(wishlist.wishlist.length > 0) { %>
+              <% wishlist.wishlist.forEach ( (productData) => {%>
+                <a href="/productDetails/<%=productData._id%>" style="text-decoration: none;">
+                          <div class="card mb-0">
+                              <div class="card-body">
+                                <div class="row">
+                                  <div class="col-sm-5">
+                                    <div class="row">
+                                      <div class="col-sm-4">
+                                          <img src="<%=productData.image[0]%>" alt="" style="width: 80px;" > 
+                                      </div>
+                                      <div class="col-sm-8">
+                                          <div>
+                                              <span style="font-size: 14px;"><%=productData.name%></span>
+                                          </div>
+                                          <span style="font-size: 12px;color: rgb(135, 135, 135);">Category:<span><%=productData.category%></span></span> 
+                                          <p style="font-size: 17px; font-weight: bold;">&#8377; <span><%=productData.price%></span></p>
+                                     
+                                      </div>
+                                    </div>
+                                </a>
+                                  </div>
+                               
+                                  <div class="col-sm-2">
+                                      <button  type="button" data-toggle="modal" data-target="#delete<%=productData._id%>" ><span><i class="bi bi-trash"></i></span></button>
+                                      <div class="modal" id="delete<%=productData._id%>" role="dialog" aria-labelledby="exampleModalLabel" aria-hidden="true">
+                                        <div class="modal-dialog" role="document">
+                                          <div class="modal-content">
+                                            <div class="modal-body">
+                                                <p class="text-danger text-center">Are you sure you want to remove this product?</p>                                   
+                                            </div>
+                                            <div class="modal-footer justify-content-center">
+                                              <button type="button" class="btn-danger"><a href="/removeWishlist/<%=productData._id%>" onclick="removeItem(event)" style="color: white;text-decoration: none; padding: 10px;" >Delete</a></button>                                  
+                                              <button type="button" class="btn-primary" data-dismiss="modal" style="padding: 3px;">Cancel</button>
+                                            </div>
+                                          </div>
+                                        </div>
+                                      </div>
+                                  </div>                
+                                </div>
+                              </div>  
+                          </div>                        
+                      
+              <% }) %>
+          <% } %>
+        </div>
+      </div>
+    </div>    
+  </section>
+
+  <script>
+async function removeItem(event){
+  event.preventDefault()
+  try{
+    const response=await fetch(event.target.href,{
+        method:"POST"
+        })
+    if(response.ok){
+      if(response.redirected){
+        window.location.href=response.url
+      } 
+    }
+  }catch(err){
+    console.log(err.message)
+  }
+} 
+
+</script>
+
+
+<%- include('../Layouts/footer.ejs') %>

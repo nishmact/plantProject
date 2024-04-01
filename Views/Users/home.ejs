@@ -1,0 +1,169 @@
+<%- include('../Layouts/header.ejs') %>
+<%- include('../Layouts/banner.ejs') %>
+
+<!-- Products Start -->
+<div class="container-fluid product py-5 my-5">
+    <div class="container py-5">
+        <div class="section-title text-center mx-auto wow fadeInUp" data-wow-delay="0.1s" style="max-width: 500px;">
+            <p class="fs-5 fw-medium fst-italic text-primary">Our Products</p>
+            <h1 class="display-6" style="margin-bottom: 60px;">Plant has a complex positive effect on the mind</h1>   
+        </div>
+        <div class="row">
+            <p style="font-weight: bold; font-size: 30px; color: rgb(14, 56, 44); margin-bottom: 2px;">Trending <a href="/products" class="btn btn-light rounded-pill py-3 px-5 animated zoomIn mt-4 mb-3" style="margin-left: 800px;">Explore More</a></p>
+            <% productData.forEach(product => { %>
+                <% if (product.status == 0) { %>
+                    <div class="col-md-4 wow fadeInUp" data-wow-delay="0.5s">
+                        <div class="d-block product-item rounded position-relative">
+                            <a href="/productDetails/<%=product._id%>">
+                                <img style="width: 400px; height: 400px;" src="<%=product.image[0]%>" alt="images">
+                            </a>
+                            <% if (userData && userData.wishlist.includes(product._id)) { %>
+                                <button id="removeWishlist_<%= product._id %>" class="love-button position-absolute top-0 start-0 translate-middle btn btn-danger rounded-circle border border-light" style="background-color: white; width: 40px; height: 40px;">
+                                    <i class="bi bi-heart-fill position-absolute top-50 start-50 translate-middle red-heart" style="font-size: 16px;"></i>
+                                </button>
+                            <% } else { %>
+                                <button id="wishlistButton_<%= product._id %>" class="love-button position-absolute top-0 start-0 translate-middle btn btn-danger rounded-circle border border-light" style="background-color: white; width: 40px; height: 40px;">
+                                    <i class="bi bi-heart-fill position-absolute top-50 start-50 translate-middle" style="font-size: 16px; color: grey;"></i>
+                                </button>
+                            <% } %>
+    
+                            <a href="/productDetails/<%=product._id%>">
+                            <div class="bg-white shadow-sm text-center p-4 position-relative mt-n5 mx-4">
+                                <h4 class="text-primary"><%=product.name%></h4>
+
+                                <div class="offer">
+                                   <span class="discounted-price" style="font-weight: bold; margin-right: 8px; font-size: 20px;">&#8377;<%= product.discountedPrice %></span>
+                                   <% if(product.totalOffer > 0) { %>
+                                    <span class="original-price" style="text-decoration: line-through; color: gray; margin-right: 8px; ">&#8377;<%= product.price %></span>
+                                    <span class="discount" style="color: green;"><%= product.totalOffer %>% off</span>
+                                    <% } %>
+                                </div>    
+                            
+                            </div>
+                        </a>
+                        </div>
+                    </div>
+                <% } %>
+            <% }) %>        
+        </div>
+      
+        <div style="width: 100%; background-color: white; display: flex; justify-content: center; margin-top: 20px; height: 60px;">
+            <nav aria-label="Page navigation example" style="padding: 10px; margin-bottom: 0px;">
+                <ul class="pagination" >
+                    <li class="page-item"><a class="page-link" href="#" style="color: black;">Previous</a></li>
+                    <% for(let i = 1; i <= totalPages; i++) { %>
+                        <li class="page-item">
+                            <a class="page-link" href="/?page=<%= i %>" style="color: black;"><%= i %></a>
+                        </li>
+                    <% } %>
+                    <li class="page-item"><a class="page-link" href="#" style="color: black;">Next</a></li>
+                </ul>
+            </nav>
+        </div>
+    </div>
+</div>
+<!-- Products End -->
+
+
+<% productData.forEach(product => { %>
+    <% if (product.status == 0) { %>
+        <!-- Your product display code -->
+        <script>
+            document.addEventListener("DOMContentLoaded", function() {
+                const wishlistButton = document.getElementById('wishlistButton_<%= product._id %>');
+                if (wishlistButton) {
+                    wishlistButton.addEventListener('click', async () => {
+                        try {
+                            const productId = '<%= product._id %>'; 
+                            console.log(productId);
+                            const response = await fetch(`/addtoWishlist/${productId}`, {
+                                method: 'POST', 
+                                headers: {
+                                    'Content-Type': 'application/json'
+                                },
+                            });
+                    
+                            if (!response.ok) {
+                                throw new Error('Network response was not ok');
+                            }
+                    
+                            const data = await response.json();
+                            console.log('Wishlist updated successfully:', data);
+                        } catch (error) {
+                            console.error('Error updating wishlist:', error);
+                        }
+                    });
+                }
+            });
+        </script>
+    <% } %>
+<% }) %>
+
+
+
+<% productData.forEach(product => { %>
+    <% if (product.status == 0) { %>
+        <script>
+            document.addEventListener("DOMContentLoaded", function() {
+                const removeWishlistButton = document.getElementById('removeWishlist_<%= product._id %>');
+                if (removeWishlistButton) {
+                    removeWishlistButton.addEventListener('click', async () => {
+                        try {
+                            const productId = '<%= product._id %>';
+                            const response = await fetch(`/removeWishlist/${productId}`, {
+                                method: 'POST',
+                                headers: {
+                                    'Content-Type': 'application/json'
+                                },
+                            });
+
+                            if (!response.ok) {
+                                throw new Error('Network response was not ok');
+                            }
+
+                            const data = await response.json();
+                            console.log('Product removed from wishlist:', data);
+                            
+                        } catch (error) {
+                            console.error('Error removing product from wishlist:', error);
+                        }
+                    });
+                }
+            });
+        </script>
+    <% } %>
+<% }) %>
+
+
+
+
+<script>
+    document.addEventListener("DOMContentLoaded", function() {
+        document.querySelectorAll('.love-button').forEach(button => {
+            button.addEventListener('click', function(event) {
+                event.preventDefault();
+                this.querySelector('i').classList.toggle('red-heart');
+            });
+        });
+
+       
+            document.querySelectorAll('.product-item img').forEach(image => {
+            image.addEventListener('click', function(event) {
+                window.location.href = this.parentElement.getAttribute('href');
+            });
+        });
+    });
+</script>
+
+<style>
+   
+    .red-heart {
+        color: red !important; 
+    }
+</style>
+
+
+
+
+
+<%- include('../Layouts/footer.ejs') %>

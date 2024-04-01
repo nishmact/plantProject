@@ -1,0 +1,300 @@
+<%- include('../Layouts/header.ejs') %>
+<style>
+  .modal1 {
+    display: none;
+    position: fixed;
+    top: 0;
+    left: 0;
+    width: 100%;
+    height: 100%;
+    background-color: rgba(0, 0, 0, 0.5);
+  }
+  .modal1-content {
+    background-color: #0e382e;
+    width: 300px;
+    margin: 100px auto;
+    padding: 20px;
+    border: 3px solid white;
+    border-radius: 10px;
+    text-align: center;
+    box-shadow: 0 0 10px 0 white;
+  }
+</style>
+<div class="container" >
+  <%if(cartData==""){%>
+    <div class="row" style="text-align: center; padding: 30px 0 36px; background-color: white; margin-top: 70px;  padding-bottom: 30px; ">
+      <div class="col-md-12 text-center pt-5">
+          <img src="/image/cartempty.webp"
+              alt="login form" style="width: 20%; " />
+        <h5 class="text-black" style="margin-top: 10px;">Your cart is empty!</h5>
+        <p >Add items to it now.</p>
+        <p><a href="/" class="btn btn-sm " style="background-color: #083b3b;">Back to shoping</a></p>
+      </div>
+    </div>
+    <div style="height: 70px;"></div>
+  <%}else{%>   
+
+<div class="container" style="margin-bottom: 20px; margin-top: 100px; margin-bottom: 150px;">
+  <div class="row">
+    <% cartData.forEach((data, index) => { %>
+      <div style="display: flex; border: 1px; width: 900px; height: 250px; margin-left: 10px; background-color: white; border-bottom: 2px solid gainsboro;">
+        <div>
+          <img style="height: 150px; width: 200px; margin-top: 25px;" src="<%=data.itemdetails[0].image[0]%>" alt="Your Image">
+
+          <p style="margin-top: 10px; margin-left: 30px;">
+          
+            <div style="display: inline-block;">
+             
+             <button style="border-radius: 25px; width: 30px; background-color: white;"><a href="/decreasQuantity/<%=data.items.product%>" style="text-decoration: none; " onclick="decreasQuantity(event,'<%=data.items.product%>')" >&minus;</a></button>
+
+              <input value="<%=data.items.quantity%>" id="quantity<%=data.items.product%>" style="width: 50px; height: 30px; text-align: center; " > 
+
+              <button style="border-radius: 25px; width: 30px; background-color: white;"><a href="/incrementQuantity/<%=data.items.product%>" style="text-decoration: none;" onclick="incrementQuantity(event,'<%=data.items.product%>')">&plus;</a></button>
+
+              <button type="button" data-toggle="modal" data-target="#delete<%=data.items.product%>" style="  border: none; margin-left: 30px; font-weight: bold; font-size: 20px;" onmouseover="this.style.color='red'"  onmouseout="this.style.color='black'">
+                Remove
+              </button>
+          </div>
+           </p>
+           <div class="modal" id="delete<%=data.items.product%>" role="dialog" aria-labelledby="exampleModalLabel" aria-hidden="true">
+            <div class="modal-dialog" role="document">
+              <div class="modal-content">
+                <div class="modal-body">
+                    <p class="text-danger text-center">Are you sure you want to remove this item?</p>                                   
+                </div>
+                <div class="modal-footer justify-content-center">
+                  <button type="button" class="btn-danger"><a href="/removeItem/<%=data.items.product%>" onclick="removeItem(event)" style="color: white;text-decoration: none;" >Remove</a></button>                                  
+                  <button type="button" class="btn-primary" data-dismiss="modal" >Cancel</button>
+                </div>
+              </div>
+            </div>
+          </div>
+        </div>
+        <div>
+          <h4 style="margin-top: 25px; "><%=data.itemdetails[0].name%> </h4>
+          <h6 id="availability<%=data.items.product%>" ></h6>
+          <input type="hidden" name="availability" id="availabilityStatus<%=data.items.product%>">
+          <h6 style=" color: grey;">Category: <%=data.itemdetails[0].category%></h6>
+          <%const price=data.items.quantity*data.items.discountedPrice%>
+          <h5 class="productTotal" id="total<%=data.items.product%>" style=" margin-top: 30px; font-weight: bold;">&#8377;<%=price%></h5>
+       </div>  
+        <hr>
+      </div>
+      <script>                          
+        var availability=document.getElementById("availability<%=data.items.product%>")
+        var availabilityStatus=document.getElementById("availabilityStatus<%=data.items.product%>")
+        var productQuantity = parseInt("<%= data.items.quantity %>");
+        var totalQuantity = parseInt("<%= data.itemdetails[0].quantity %>");
+        if(productQuantity<=totalQuantity){   
+          var date = new Date();
+          var options = {
+                  weekday: 'long',
+                  month: 'short',
+                  day: 'numeric'
+              };
+          var deliveryDates = new Date(date.getTime() + "<%=data.itemdetails[0].deliveryTime%>" * 24 * 60 * 60 * 1000).toLocaleDateString('en-US', options);
+          availability.innerHTML=`<h6 class="text-success">${deliveryDates}</h6>`
+          availabilityStatus.value=1
+        }else{
+          availability.innerHTML=`<h4 class="text-danger" >Out Of Stock</h4>`
+          availabilityStatus.value=0
+        }                          
+      </script>
+    <% }) %>
+  </div>
+  <div style="position: absolute; top: 180px; right: 90px;  width: 400px; height: 350px; margin-left: 0px; margin-top: 10px;  background-color: white;">
+    <h5 style="margin-top: 20px; margin-left: 10px; font-weight: bold; color: grey;">PRICE DETAILS</h5>
+    <hr>
+    <div class="row mb-3">
+      <div class="col-md-6">
+        <span class="" style="color: gray; font-size: 15px; font-weight: bold;  margin-top: 20px; margin-left: 10px;">Price</span>
+      </div>
+      <div class="col-md-6 text-right">
+        <strong class="text-black" id="subTotal"></strong>
+      </div>
+    </div>
+    <div class="row mb-3">
+      <div class="col-md-6">
+        <span class="" style=" color: gray; font-size: 15px; font-weight: bold;  margin-top: 20px; margin-left: 10px;">Delivery Charge</span>
+      </div>
+      <div class="col-md-6 text-right">
+        <strong class="text-black" id="delivery"><span style="text-decoration: line-through; color: gray; ">₹50.00</span> <span style="color: green; font-weight: bold; font-size: 15px ">Free</span></strong>
+      </div>
+    </div>
+      <hr>
+      <div class="row mb-5">
+        <div class="col-md-6">
+          <span class="" style="color: rgb(14, 56, 44); font-size: 20px; font-weight: bold; margin-left: 10px;">Total Amount</span>
+        </div>
+        <div class="col-md-6 text-right">
+          <strong class="text-black" id="cartTotal" ></strong>
+        </div>
+      </div>
+      <form method="post" action="/checkout">
+        <button style="margin-left: 180px; margin-top: 5px; width: 200px; height: 50px; color: white; background-color: orangered; border: 0px;  font-size: 15px; font-weight: bold;">Proceed To Checkout</button>
+      </form>
+      </div>  
+    <%}%>
+    <div class="modal1" id="popupModal">
+      <div class="modal1-content">
+        <h6 id="popupMessage" style="color: white;"></h6>
+        <button style="width: 25%; background-color: rgb(237, 235, 233); color: #0e382e; font-size: large; font-weight: 900; border: 3px solid white; margin: 10%;" onclick="hidePopup()">ok</button>
+      </div>
+    </div>
+
+</div>
+</div>
+
+<script>
+
+
+function showPopup(message) {
+  var modal = document.getElementById("popupModal");
+  var textArea = document.getElementById("popupMessage");
+  textArea.innerHTML = message;
+  modal.style.display = "block";
+}
+
+function hidePopup() {
+  var modal = document.getElementById("popupModal");
+  modal.style.display = "none";
+}
+  
+window.addEventListener('DOMContentLoaded', () => {
+  calculateTotal();
+});
+
+function calculateTotal() {
+  const productTotalElements = document.querySelectorAll('.productTotal');
+  let total = 0;
+
+  productTotalElements.forEach(element => {
+    const priceString = element.innerText.replace('₹', ''); 
+    const price = parseFloat(priceString);
+    total += price;
+  });
+
+  //const deliveryCharge = total > 1000 ? 0 : 50;
+
+  const cartTotalElement = document.getElementById('cartTotal');
+  const priceTotalElement = document.getElementById('subTotal');
+ // const deliveryChargeElement = document.getElementById('delivery');
+
+
+ // const totalWithDelivery = total + deliveryCharge;
+
+  cartTotalElement.innerText = '₹' + total.toFixed(2);
+  priceTotalElement.innerText = '₹' + total.toFixed(2);
+  
+ 
+  if (deliveryCharge === 0) {
+    deliveryChargeElement.innerHTML = `<span style="text-decoration: line-through; color: gray; ">₹50.00</span> <span style="color: green; font-weight: bold; font-size: 15px ">Free</span>`; 
+    
+  } else {
+    deliveryChargeElement.innerText = '₹' + deliveryCharge.toFixed(2);
+  }
+}
+
+
+
+
+async function removeItem(event){
+  event.preventDefault()
+  try{
+    const response=await fetch(event.target.href,{
+        method:"POST"
+        })
+    if(response.ok){
+      if(response.redirected){
+        window.location.href=response.url
+      } 
+    }
+  }catch(err){
+    console.log(err.message)
+  }
+} 
+
+async function incrementQuantity(event, productId) {
+  event.preventDefault();
+  const availability = document.getElementById('availability' + productId);
+  var availabilityStatus = document.getElementById("availabilityStatus" + productId).value;
+  if (availabilityStatus == 0) {
+    return false;
+  }
+  const quantityInput = document.getElementById('quantity' + productId);
+  const productTotal = document.getElementById('total' + productId);
+  if (!productTotal) {
+    console.error('Total price element not found for product ID:', productId);
+    return; 
+  }
+  const response = await fetch(event.target.href, {
+    method: "POST"
+  });
+  if (response.ok) {
+    if (response.redirected) {
+      window.location.href = response.url;
+    } else {
+      const result = await response.json();
+      if (result.message) {
+       // console.log(result);
+        quantityInput.value++;
+       // console.log('Product Total:', result.productTotal); 
+        productTotal.innerText = '₹' + result.productTotal; 
+        calculateTotal()
+      }else{
+        showPopup("Sorry! We don't have any more units for this item.")
+      }
+    }
+  }
+}
+
+async function decreasQuantity(event,productId){
+  event.preventDefault()
+  const availability=document.getElementById('availability'+productId)
+  var availabilityStatus=document.getElementById("availabilityStatus"+productId)
+  const quantityInput=document.getElementById('quantity'+productId)
+  const productTotal=document.getElementById('total'+productId)
+  if (!productTotal) {
+    console.error('Total price element not found for product ID:', productId);
+    return; 
+  }
+  if(quantityInput.value==1){
+    return
+  }
+  const response=await fetch(event.target.href,{
+    method:"POST"
+  })
+  if(response.ok){
+    if(response.redirected){
+      window.location.href=response.url
+    }else{
+      const result=await response.json()
+      if(result.message){
+        quantityInput.value--
+       // console.log(result);
+       // console.log('Product Total:', result.productTotal); 
+       productTotal.innerText = '₹' + result.productTotal; 
+       calculateTotal()
+        if(result.quantity<=result.totalStock){   
+          var date = new Date();
+          var options = {
+                  weekday: 'long',
+                  month: 'short',
+                  day: 'numeric'
+              };
+          var deliveryDates = new Date(date.getTime() + result.deliveryTime* 24 * 60 * 60 * 1000).toLocaleDateString('en-US', options);
+          availability.innerHTML=`<h6 class="text-success">${deliveryDates}</h6>`
+          availabilityStatus.value=1
+      }else{
+        availability.innerHTML=`<h4 class="text-danger" >Out Of Stock</h4>`
+        availabilityStatus.value=0
+      }
+      }
+    }
+  }
+
+}
+
+</script>
+
+<%- include('../Layouts/footer.ejs') %>

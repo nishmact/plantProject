@@ -1,0 +1,199 @@
+<%- include('../adminLayouts/header.ejs') %>
+
+<div class="container">
+
+    <!-- Sale & Revenue Start -->
+    <div class="container-fluid pt-4 px-4">
+        <div class="row">
+          <div class="col-sm-6 col-xl-4">
+            <div class="bg-light rounded d-flex align-items-center justify-content-between p-4">
+              <i class="fa fa-chart-line fa-3x text-primary"></i>
+              <div class="ms-3">
+                <p class="mb-0">Total Revenue</p>
+                <h6 class="mb-0">₹<%= totalRevenue.length ? totalRevenue[0].total : 0 %></h6>
+               </div>
+            </div>
+          </div>
+          <div class="col-sm-6 col-xl-4">
+            <div class="bg-light rounded d-flex align-items-center justify-content-between p-4">
+              <i class="fa fa-chart-bar fa-3x text-primary"></i>
+              <div class="ms-3">
+                <p class="mb-0">Total Orders</p>
+              
+                <h6 class="mb-0"><%= totalOrders.length ? totalOrders[0].total : 0 %></h6>
+               
+              </div>
+            </div>
+          </div>
+          <div class="col-sm-6 col-xl-4">
+            <div class="bg-light rounded d-flex align-items-center justify-content-between p-4">
+              <i class="fa fa-user fa-3x text-primary"></i>
+              <div class="ms-3">
+                <p class="mb-0">Total Users</p>
+               
+                <h6 class="mb-0"><%= totalUsers.length ? totalUsers[0].total : 0 %></h6>
+               
+              </div>
+            </div>
+          </div>
+          
+        </div>
+      </div>
+
+                             <div class="card easion-card" style="height: 500px; width: 500px;  margin-top: 30px;">
+                                        <div class="card-header">
+                                            <div class="easion-card-icon">
+                                                <i class="fas fa-chart-bar"></i>
+                                            </div>
+                                            <div class="easion-card-title"> Bar Chart </div>
+                                            <div class="easion-card-menu">
+                                                <div class="dropdown show">
+                                                    <a class="easion-card-menu-link" href="#" role="button" data-toggle="dropdown" aria-haspopup="true" aria-expanded="false">
+                                                    </a>
+                                                    <div class="dropdown-menu dropdown-menu-right" aria-labelledby="dropdownMenuLink">
+                                                        <a class="dropdown-item" href="#" id="weekly">This Week</a>
+                                                        <a class="dropdown-item" href="#" id="monthly">This Month</a>
+                                                        <a class="dropdown-item" href="#" id="yearly">This Year</a>
+                                                    </div>
+                                                </div>
+                                            </div>
+                                        </div>
+                                        <div class="card-body easion-card-body-chart">
+                                            <canvas id="easionChartjsBar" width="50" height="40"></canvas>
+                                            
+                                            
+                                            <script>
+                                              document.addEventListener('DOMContentLoaded', function () {
+                                                console.log("Weekly Sales Data:", <%= JSON.stringify(weeklySalesData) %>);
+                                                  renderWeeklyChart();
+                                              });
+                                          
+                                             
+                                              function renderWeeklyChart() {
+                                             var ctx = document.getElementById("easionChartjsBar").getContext('2d');
+                                             var myChart = new Chart(ctx, {
+                                              type: 'bar',
+                                               data: {
+                                               labels: ["Sunday", "Monday", "Tuesday", "Wednesday", "Thursday", "Friday", "Saturday"],
+                                               datasets: [{
+                                               label: 'Weekly Sales',
+                                               data: [<%= weeklySalesData[0] %>, <%= weeklySalesData[1] %>, <%= weeklySalesData[2] %>, <%= weeklySalesData[3] %>, <%= weeklySalesData[4] %>, <%= weeklySalesData[5] %>, <%= weeklySalesData[6] %>],
+                                               backgroundColor: 'rgba(54, 162, 235, 0.6)',
+                                              borderColor: 'rgba(54, 162, 235, 1)',
+                                               borderWidth: 1
+                                               }]
+                                               },
+                                                options: {
+                                                legend: {
+                                                display: false
+                                                 },
+                                                  scales: {
+                                                  yAxes: [{
+                                                  ticks: {
+                                                  beginAtZero: true,
+                                                  suggestedMax: 10,
+                                                  stepSize: 1,
+                                                  callback: function(value) { return value; }
+                                                }
+                                              }],
+                                             }
+                                           }
+                                         });
+                                      }
+  
+
+
+
+
+
+
+
+
+
+                                          
+                                             
+                                              document.getElementById('weekly').addEventListener('click', function() {
+                                                 
+                                                  renderWeeklyChart();
+                                                  console.log(`Weekly chart script executed at: ${new Date().toLocaleString()}`);
+                                              });
+                                          </script>
+                                            
+                                            <script>
+                                             document.getElementById('yearly').addEventListener('click', function() {
+                                                var ctx = document.getElementById("easionChartjsBar").getContext('2d');
+                                                var myChart = new Chart(ctx, {
+                                                  type: 'bar',
+                                                  data: {
+                                                    labels: ['Jan', 'Feb', 'Mar', 'Apr', 'May', 'Jun', 'Jul', 'Aug', 'Sep', 'Oct', 'Nov', 'Dec'],
+                                                    datasets: [{
+                                                      label: 'Weekly Sales',
+                                                      data: <%= JSON.stringify( monthlySalesData)%>, 
+                                                      backgroundColor: 'rgba(54, 162, 235, 0.6)',
+                                                      borderColor: 'rgba(54, 162, 235, 1)',
+                                                      borderWidth: 1
+                                                    }]
+                                                  },
+                                                  options: {
+                                                    legend: {
+                                                      display: false
+                                                    },
+                                                    scales: {
+                                                      yAxes: [{
+                                                        ticks: {
+                                                          beginAtZero: true,
+                                                          suggestedMax: 10,
+                                                          stepSize: 1,
+                                                          callback: function(value) { return value; }
+                                                        }
+                                                      }],
+                                                    }
+                                                  }
+                                                });
+                                              });
+                                            </script>
+
+                                 <script>
+                                document.getElementById('monthly').addEventListener('click', function() {
+                                var dateSalesData = <%= dateSalesData %>;
+                                var datesInMonth = <%= datesInMonth %>;
+
+                                var ctx = document.getElementById("easionChartjsBar").getContext('2d');
+                                var myChart = new Chart(ctx, {
+                                type: 'bar',
+                                data: {
+                                labels: datesInMonth,
+                                datasets: [{
+                                label: 'Monthly Sales',
+                                data: dateSalesData, 
+                                backgroundColor: 'rgba(54, 162, 235, 0.6)',
+                                borderColor: 'rgba(54, 162, 235, 1)',
+                                borderWidth: 1
+                                }]
+                               },
+                               options: {
+                               legend: {
+                               display: false
+                               },
+                               scales: {
+                              yAxes: [{
+                              ticks: {
+                             beginAtZero: true,
+                             suggestedMax: 10,
+                             stepSize: 1,
+                             callback: function(value) { return value; }
+                             }
+                            }],
+                            }
+                           }
+                            });
+                           });
+                           </script>
+
+
+
+           </div>
+      </div>
+                                    
+</div>
+<%- include('../adminLayouts/footer.ejs') %>

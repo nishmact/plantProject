@@ -1,0 +1,110 @@
+<%- include('../adminLayouts/header.ejs') %>
+
+<section>
+    <div class="container">
+        <div class="d-flex justify-content-between">
+            <h4 style="color: #0e382e;"><b>Order Details</b></h4>
+        </div>
+        <table class="table mt-2">
+            <thead style="border-bottom: solid #0e382e;border-top: solid #0e382e ">
+                <tr style="color: #0e382e;font-weight: bolder;">
+                <th scope="col">No</th>
+                <th scope="col">User Id</th>
+                <th scope="col">Product name</th>
+                <th scope="col">Quantity</th>
+                <th scope="col">Price</th>
+                <th scope="col">Payment type</th>
+                <th scope="col">Order date</th>
+                <th scope="col">Order status</th>
+                <th scope="col">Reason</th>
+                <th scope="col">Status date</th>
+                <th scope="col">Actions</th>
+                </tr>
+            </thead>
+            <tbody>
+               
+                <% let i=1%>
+                <% orderData.forEach((order) => { %>
+                    <% order.items.forEach((productData) => { %>
+                      
+                <tr >
+                    <td style="color: #0e382e"><%= i++ %></td>
+                    <td style="color: #0e382e"><%= order.userId.email %></td>
+                    <td style="color: #0e382e"><%= productData.product.name %></td>
+                    <td style="color: #0e382e">1</td>
+                    <td style="color: #0e382e"><%= productData.price %></td>
+                    <td style="color: #0e382e"><%= order.paymentType%></td>
+                    <td style="color: #0e382e"><%= order.start_date.toLocaleDateString() %></td>
+                    <td style="color: #0e382e"><%= productData.orderStatus %></td>
+                    <td style="color: #0e382e"><%= productData.reason %></td>
+                    <td style="color: #0e382e"><%= order.start_date.toLocaleDateString() %></td>
+                    <%if(productData.orderStatus=="adminCancelled"||productData.orderStatus=="userCancelled"||productData.orderStatus=="returned"||productData.orderStatus=="delivered"){%>
+                        <td style="color: #0e382e">
+                            <button type="button" class="btn btn-sm" style="background-color: #0e382e;color: white;border-radius: 6px;font-size: 12px;" disabled> No action required</button>
+                        </td>
+                    <%}else{%>
+                        <td style="color: #0e382e">
+                            <button data-toggle="modal" data-target="#change<%= productData._id %>" type="button" class="btn btn-sm" style="background-color: #0e382e;color: white;border-radius: 6px;font-size: 12px;"> Change status</button>
+                        </td>
+                        <div class="modal" id="change<%= productData._id %>" role="dialog" aria-labelledby="exampleModalLabel" aria-hidden="true">
+                            <div class="modal-dialog" role="document">
+                                <div class="modal-content">
+                                    <form action="/admin/orderStatus?order_id=<%=order._id%>&item_id=<%=productData.product._id%>&unit_id=<%=productData._id%>" method="post">
+                                        <div class="modal-body">
+                                            <p class="text-danger text-center">Are you sure to change the order status?.</p>
+                                            <div class="row">
+                                                <div class="col-12">
+                                                    <select name="status" class="form-select w-100">
+                                                        <%if(productData.orderStatus=="placed"){%>
+                                                            <option value="shipped">Order shipped</option>
+                                                            <option value="adminCancelled">Cancel the order</option>
+                                                        <%}else if(productData.orderStatus=="shipped"){%>
+                                                            <option value="delivered">Order deleivered</option>
+                                                            <option value="adminCancelled">Cancel the order</option>
+                                                        <%}else if(productData.orderStatus=="cancelRequest"){%>
+                                                            <option value="userCancelled">Accept user cancel request</option>
+                                                            <option value="cancelRquestRejected">Reject User cancel request</option>
+                                                        <%}else if(productData.orderStatus=="returnRequest"){%>
+                                                            <option value="returned">Accept user return request</option>
+                                                            <option value="returnRquestRejected">Reject User return request</option>
+                                                        <%}%>
+                                                    </select>
+                                                    <input type="hidden" value="<%= productData.price %>" name="price">
+                                                    <input type="hidden" value="<%= productData.reason %>" name="reason">
+                                                    <input type="hidden" value="<%= order.userId._id %>" name="userId">
+                                                </div>
+                                            </div>                                   
+                                        </div>
+                                        <div class="modal-footer justify-content-center">
+                                            <button type="submit" class="btn btn-success">Submit changes</button>                              
+                                            <button type="button" class="btn btn-primary" data-dismiss="modal">Close</button>
+                                        </div>
+                                    </form>
+                                </div>
+                            </div>
+                        </div>    
+                    <%}%>               
+                </tr> 
+              
+                <%})%>
+                <%})%> 
+            </tbody>
+        </table>  
+        <div style="width: 100%; background-color: white; display: flex; justify-content: center; margin-top: 20px; height: 60px;">
+            <nav aria-label="Page navigation example" style="padding: 10px; margin-bottom: 0px;">
+                <ul class="pagination" >
+                    <li class="page-item"><a class="page-link" href="#" style="color: black;">Previous</a></li>
+                    <% for(let i = 1; i <=  totalPages; i++) { %>
+                        <li class="page-item">
+                            <a class="page-link" href="/admin/viewOrders?page=<%= i %>" style="color: black;"><%= i %></a>
+                        </li>
+                    <% } %>
+                    <li class="page-item"><a class="page-link" href="#" style="color: black;">Next</a></li>
+                </ul>
+            </nav>
+        </div>       
+    </div>        
+</section>    
+
+<%- include('../adminLayouts/actionResponse.ejs') %>            
+<%- include('../adminLayouts/footer.ejs') %>

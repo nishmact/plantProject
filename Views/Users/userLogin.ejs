@@ -1,0 +1,93 @@
+<%- include('../Layouts/header.ejs') %>
+
+<!-- Section: Design Block -->
+<section class="">
+    <!-- Jumbotron -->
+    <div class="px-4 py-5 px-md-5 text-center text-lg-start" style="background-image: url('image/imgbacks.jpg'); height: 650px; background-size: 100%;">
+      <div class="container">
+        <div class="row gx-lg-5 align-items-center">
+          
+            <div class="card" style="background-color: rgba(255,255,255,0.5); border-radius: 10%; margin-left: 700px; width: 550px;">
+              <div class="card-body py-5 px-md-5">
+
+                <%if(message==="blocked"){%>
+                  <h1>Sorry You are a blocked user! Please write a mail to our team</h1>
+                  <a href="mailto:nishmact3@gmail.com">Click here to contact our team</a>
+
+                <%}else{%>  
+
+                <form method="post" action="/userLogin" name="userLogin" onsubmit="return validateForm()">
+                  <!-- 2 column grid layout with text inputs for the first and last names -->
+                 
+                       <h3 style="margin-left: 20px; margin-bottom: 20px; font-weight: bold;">Login</h3>
+                    
+  
+                 <!-- Email input -->
+                 <div class="form-group">
+                  <label for="username" class="form-label">Email address</label>
+                  <input type="email" id="email" class="form-control" name="email">
+                  <p style="color: red;" id="error-email"></p>
+                </div>  
+  
+                 <!-- Password input -->
+                 <div class="form-group">
+                  <label class="form-label">Password</label>
+                  <input type="password" id="password" class="form-control" name="password">
+                  <p style="color: red;" id="error-password"></p>
+                </div>
+  
+                  <%if(message==="not exist"){%>
+                    <span class="text-danger text-center" >The Email ID is does not exist</span>
+                    <a href="/userSignup" class=" text-center " style="color: rgb(107, 42, 42);">Please click here to signup</a>
+                  <%}else{%>
+                    <h6 class="text-danger text-center"><%= message%></h6>
+                  <%}%>     
+  
+                  <!-- Submit button -->
+                  <button type="submit" class="btn  btn-block mb-1 mt-0" style="background-color: #083b3b;">
+                    Login
+                  </button>
+
+                  <!-- Checkbox -->
+                 <a href="/forgetPassword"><p>Forget password</p></a>
+  
+                  <!-- Register buttons -->
+                  <div class="text-center">
+                    <p>Dont have an account? <a href="/userSignup" style="color: black;">Register</a></p>
+                    
+
+                  </div>
+                </form>
+                <%}%>
+              </div>
+            </div>
+          
+        </div>
+      </div>
+    </div>
+    <!-- Jumbotron -->
+  </section>
+  <!-- Section: Design Block -->
+
+  <script>
+    function validateForm(){                                                       
+    var email = document.getElementById("email").value;
+    var password = document.getElementById("password").value;
+    var flag=true
+    document.getElementById("error-email").innerText = "";
+    document.getElementById("error-password").innerText = "";
+  
+    if(email ===""){
+      document.getElementById("error-email").innerText = "Please enter Username";
+      flag= false;
+    }
+    if(password ===""){
+      document.getElementById("error-password").innerText = "Please enter Password";
+      flag= false;
+    }
+    
+       return flag;
+  }
+  </script>
+
+  <%- include('../Layouts/footer.ejs') %>

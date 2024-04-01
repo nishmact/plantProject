@@ -1,0 +1,413 @@
+<%- include('../adminLayouts/header.ejs') %>
+
+<section>
+  <div class="container">
+    <div class="d-flex justify-content-between">
+      <h4 style="color: #0e382e;"><b>Product Details</b></h4>
+      <button data-toggle="modal" data-target="#newProduct" type="button" class="btn add-new" style="background-color: #0e382e;color: white;border-radius: 6px;"><i class="fa fa-plus"></i> Add New Product</button>
+    </div>    
+    <table class="table mt-2">
+      <thead style="border-bottom: solid #0e382e;border-top: solid #0e382e ">
+        <tr style="color: #0e382e;font-weight: bolder;">
+          <th scope="col">No</th>
+          <th scope="col">Name</th>
+          <th scope="col">Category</th>
+          <th scope="col">Price</th>
+          <th scope="col">Offer</th>
+          <th scope="col">Quantity</th>
+          <th scope="col">Delivery Time</th>
+          <th scope="col">Description</th>
+          <th scope="col">Image</th>
+          <th scope="col">Status</th>          
+          <th scope="col">Actions</th>
+        </tr>
+      </thead>
+      <tbody>
+      <% let i=1%>
+      <% productData.forEach(product=>{%>
+        <tr>
+          <td style="color: #0e382e"><%= i++ %></td>
+          <td style="color: #0e382e"><%= product.name %></td>
+          <td style="color: #0e382e"><%= product.category %></td>
+          <td style="color: #0e382e">&#8377; <%= product.price %></td>
+          <td style="color: #0e382e">
+            <% if ( product.productOffer > 0) { %>
+              <%= product.productOffer %>% 
+            <% } else { %>
+              No offer
+            <% } %>
+          </td>          
+          <td style="color: #0e382e"><%= product.quantity %></td>
+          <td style="color: #0e382e"><%= product.deliveryTime %><span> Days</span></td>
+          <td style="color: #0e382e"><%= product.description %></td>
+          <td style="color: #0e382e">
+            <img src="<%= product.image[0] %>" alt="Product Image" style="max-width: 100px;">
+        </td>
+        
+          <%if(product.status===0 && product.quantity > 0){%>
+          <td class="text-success">Listed</td>
+          <%}else{%>
+          <td class="text-danger">Unlisted</td>
+          <%}%>                            
+          <td style="color: #0e382e">
+            <button data-toggle="modal" data-target="#edit<%=product._id%>"><i class="fa-solid fa-pen" style="color: #0e382e;"></i></button>
+            <%if(product.status===0){%>
+            <button data-toggle="modal" data-target="#delete<%= product._id %>"><i class="fa-solid fa-ban" style="color: hsl(0, 75%, 46%);"></i></button>
+            <%}else{%>
+            <button data-toggle="modal" data-target="#delete<%= product._id %>"><i class="fa-solid fa-ban" style="color: hsl(129, 75%, 46%);"></i></button>
+            <%}%>
+          </td>
+          <div class="modal" id="delete<%= product._id %>" role="dialog" aria-labelledby="exampleModalLabel" aria-hidden="true">
+            <div class="modal-dialog" role="document">
+              <div class="modal-content">
+                <div class="modal-body">
+                  <%if(product.status===0 ){%>
+                    <p class="text-danger text-center">Are sure to unlist the product?.</p>
+                  <%}else{%>
+                    <p class="text-danger text-center">Are sure to list the product?.</p>
+                  <%}%>                                    
+                </div>
+                <div class="modal-footer justify-content-center">
+                  <%if(product.status===0){%>
+                    <a href="/admin/listProduct/<%= product._id %>"><button type="button" class="btn btn-danger">Unlist product</button></a>
+                  <%}else{%>
+                    <a href="/admin/listProduct/<%= product._id %>"><button type="button" class="btn btn-success">List product</button></a>
+                  <%}%>                                                      
+                  <button type="button" class="btn btn-primary" data-dismiss="modal">Close</button>
+                </div>
+              </div>
+            </div>
+          </div>
+        </tr>
+        <div class="modal" id="edit<%= product._id %>" role="dialog" aria-labelledby="exampleModalLabel" aria-hidden="true" >
+          <div class="modal-dialog" role="document">
+            <div class="modal-content"  style="width: 100%px;">
+              <div class="modal-body" >
+                <div class="container mt-1" >
+                  <div class="container mt-4">
+                    <div class="row">
+                      <div class="col-md-12">
+                        <h2 class="text-center">Edit product</h2>
+                        <form id="productForm" action="/admin/editProduct/<%=product._id%>" method="post" role="form" enctype="multipart/form-data" onsubmit="return validateForm('<%= product._id %>')" >
+                          <label for="">Name</label>
+                          <input id="name<%= product._id %>" type="text" name="name" class="form-control" value="<%=product.name%>">
+                          <p style="color: red;" id="error-name<%= product._id %>"></p>
+                          <label for="">Select an Category:</label>
+                          <select id="options" class="form-control" name="category">
+                            <% categories.forEach(category=>{%>  
+                            <option ><%=category.name%> </option>
+                            <%})%>
+                          </select>
+                          <label for="">Price</label>
+                          <input id="price<%= product._id %>" type="number" name="price" class="form-control" value="<%=product.price%>">
+                          <p style="color: red;" id="error-price<%= product._id %>"></p>
+                          <label for="">Offer (%)</label>
+                          <input id="productOffer<%= product._id %>" type="number" name="productOffer" class="form-control" value="<%=product.productOffer%>">
+                          <label for="">Quantity</label>
+                          <input id="quantity<%= product._id %>" type="number" name="quantity" class="form-control" value="<%=product.quantity%>">
+                          <p style="color: red;" id="error-quantity<%= product._id %>"></p>
+                          <label for="">Delivery Time</label>
+                          <input id="deliveryTime<%= product._id %>" type="number" name="deliveryTime" class="form-control" value="<%=product.deliveryTime%>">
+                          <p style="color: red;" id="error-deliveryTime<%= product._id %>"></p>
+                          <label for="">Description</label>
+                          <textarea id="description<%= product._id %>" name="description" id="" class="d-block" cols="mr-auto" rows="3" style="display: block;width:100%"><%= product.description %></textarea>
+                          <p style="color: red;" id="error-description<%= product._id %>"></p>
+                          <label for="">Images</label>
+                          <div id="imgViewContainer">
+                            <% product.image.forEach((image, index) => { %>
+                              <div>
+                                  <img src="<%= image %>" alt="Product Image" style="max-width: 100px; margin-right: 10px;">  
+                                  <button style="padding: 5px; border-radius: 5px;  background-color: white; " onmouseover="this.style.backgroundColor='red'; this.style.color='white';" onmouseout="this.style.backgroundColor='white'; this.style.color='black';" type="button" onclick="deleteImage('<%= product._id %>', '<%= image %>')">Delete</button>
+                              </div>
+                          <% }); %>
+                          </div>
+                         <input type="file" multiple name="image" class="form-control" onchange="viewImage(event)">
+                          <div class="text-center">
+                            <button type="submit" class="btn btn-primary btn-lg mt-3">Submit</button>
+                            <button type="button" class="btn btn-primary btn-lg mt-3" data-dismiss="modal">Close</button> 
+                          </div>
+                        </form>
+                      </div>
+                    </div>
+                  </div>
+                </div>
+              </div>
+            </div>
+          </div>
+        </div>
+
+        <%})%>                      
+      </tbody>
+    </table>
+    <div style="width: 100%; background-color: white; display: flex; justify-content: center; margin-top: 20px; height: 60px;">
+      <nav aria-label="Page navigation example" style="padding: 10px; margin-bottom: 0px;">
+          <ul class="pagination" >
+              <li class="page-item"><a class="page-link" href="#" style="color: black;">Previous</a></li>
+              <% for(let i = 1; i <=  totalPages; i++) { %>
+                  <li class="page-item">
+                      <a class="page-link" href="/admin/viewProducts?page=<%= i %>" style="color: black;"><%= i %></a>
+                  </li>
+              <% } %>
+              <li class="page-item"><a class="page-link" href="#" style="color: black;">Next</a></li>
+          </ul>
+      </nav>
+  </div>
+    <!--------------new product adding------------->
+
+    <div class="modal" id="newProduct" role="dialog" aria-labelledby="exampleModalLabel" aria-hidden="true" >
+      <div class="modal-dialog" role="document">
+        <div class="modal-content"  style="width: 100%px;">
+          <div class="modal-body" >
+            <div class="container mt-1" >
+              <div class="container mt-4">
+                <div class="row">
+                  <div class="col-md-12">
+                    <h2 class="text-center">Add new product</h2>
+                    <form action="/admin/addProduct" method="post" enctype="multipart/form-data" onsubmit="return validateAddProductForm()">
+                      <label for="">Name</label>
+                      <input id="name"  type="text" name="name" class="form-control">
+                      <p style="color: red;" id="error-name"></p>
+                      <label for="">Select an Category:</label>
+                      <select id="options" class="form-control" name="category">
+                        <% categories.forEach(category=>{%>  
+                        <option ><%=category.name%> </option>
+                        <%})%>
+                      </select>
+                      <label for="">Price</label>
+                      <input id="price" type="number" name="price" class="form-control" >
+                      <p style="color: red;" id="error-price"></p>    
+                      <label for="">Offer (%)</label>
+                      <input id="productOffer" type="number" name="productOffer" class="form-control">
+                      <p style="color: red;" id="error-offer"></p>               
+                      <label for="">Quantity</label>
+                      <input id="quantity" type="number" name="quantity" class="form-control">
+                      <p style="color: red;" id="error-quantity"></p>                      
+                      <label for="">Delivery Time</label>
+                      <input id="deliveryTime" type="number" name="deliveryTime" class="form-control" placeholder="No of days">
+                      <p style="color: red;" id="error-deliveryTime"></p>
+                      <label for="">Description</label>
+                      <textarea id="description" name="description" cols="mr-auto"style="display: block;width:100%"></textarea>
+                      <p style="color: red;" id="error-description"></p>
+                      <div class="mb-3">
+                        <label class="form-label" for="modelInputEmail">Images</label>
+                        <div id="previewContainer" class="row mb-4"></div>
+                        <input  class="form-control" id="modalInputFile" type="file" name="image" aria-describedby="emailHelp" multiple required>
+                      </div>
+                      <div class="text-center">
+                        <button type="submit" class="btn btn-primary btn-lg mt-3">Submit</button>
+                        <button type="button" class="btn btn-primary btn-lg mt-3" data-dismiss="modal">Close</button> 
+                      </div>
+                    </form>
+                  </div>
+                </div>
+              </div>
+            </div>
+          </div>
+        </div>
+      </div>
+    </div>  
+  </div>
+</section>
+
+
+
+<script>
+
+function deleteImage(productId, imageUrl) {
+  fetch(`/admin/deleteImage/${productId}`, {
+    method: 'POST',
+    headers: {
+      'Content-Type': 'application/json',
+    },
+    body: JSON.stringify({ imageUrl }),
+  })
+  .then(response => {
+    if (response.ok) {
+      
+      location.reload(); 
+    } else {
+      console.error('Failed to delete image');
+    }
+  })
+  .catch(error => {
+    console.error('Error deleting image:', error);
+  });
+}
+
+
+function validateForm(productId){      
+  const name = document.getElementById("name" + productId).value;
+  const priceInput = document.getElementById('price' + productId).value;
+  const quantityInput = document.getElementById('quantity' + productId).value;
+  const deliveryTime = document.getElementById('deliveryTime' + productId).value;
+  const description = document.getElementById('description' + productId).value;
+  
+  let flag = true;
+
+  const price = parseFloat(priceInput);
+  const quantity = parseFloat(quantityInput);
+  const delivery = parseFloat(deliveryTime);
+
+  document.getElementById("error-name" + productId).innerText = "";
+  document.getElementById("error-price" + productId).innerText = "";
+  document.getElementById("error-quantity" + productId).innerText = "";
+  document.getElementById("error-deliveryTime" + productId).innerText = "";
+  document.getElementById("error-description" + productId).innerText = "";
+
+  if(name === ""){
+    document.getElementById("error-name" + productId).innerText = "Please enter Fullname";
+    flag = false;
+  }
+
+  if(priceInput === ""){
+    document.getElementById("error-price" + productId).innerText = "Please enter Price";
+    flag = false;
+  } else if(price < 0){
+    document.getElementById("error-price" + productId).innerText = "Price cannot be negative";
+    flag = false;
+  }
+
+  if(quantityInput === ""){
+    document.getElementById("error-quantity" + productId).innerText = "Please enter Quantity";
+    flag = false;
+  } else if(quantity < 0){
+    document.getElementById("error-quantity" + productId).innerText = "Quantity cannot be negative";
+    flag = false;
+  }
+
+  if(deliveryTime === ""){
+    document.getElementById("error-deliveryTime" + productId).innerText = "Please enter Delivery Time";
+    flag = false;
+  } else if(delivery < 0){
+    document.getElementById("error-deliveryTime" + productId).innerText = "Delivery Time cannot be negative";
+    flag = false;
+  }
+
+  if(description === ""){
+    document.getElementById("error-description" + productId).innerText = "Please enter Description";
+    flag = false;
+  }
+
+  return flag;
+}
+
+function validateAddProductForm(){
+  const name = document.getElementById("name").value;
+  const priceInput = document.getElementById('price').value;
+  const quantityInput = document.getElementById('quantity').value;
+  const deliveryTime = document.getElementById('deliveryTime').value;
+  const description = document.getElementById('description').value;
+
+  let flag = true;
+
+  const price = parseFloat(priceInput);
+  const quantity = parseFloat(quantityInput);
+  const delivery = parseFloat(deliveryTime);
+
+  document.getElementById("error-name").innerText = "";
+  document.getElementById("error-price").innerText = "";
+  document.getElementById("error-quantity").innerText = "";
+  document.getElementById("error-deliveryTime" ).innerText = "";
+  document.getElementById("error-description").innerText = "";
+
+
+  if(name === ""){
+    document.getElementById("error-name").innerText = "Please enter Fullname";
+    flag = false;
+  }
+
+  if(priceInput === ""){
+    document.getElementById("error-price").innerText = "Please enter Price";
+    flag = false;
+  } else if(price < 0){
+    document.getElementById("error-price").innerText = "Price cannot be negative";
+    flag = false;
+  }
+
+  if(quantityInput === ""){
+    document.getElementById("error-quantity").innerText = "Please enter Quantity";
+    flag = false;
+  } else if(quantity < 0){
+    document.getElementById("error-quantity" ).innerText = "Quantity cannot be negative";
+    flag = false;
+  }
+
+  if(deliveryTime === ""){
+    document.getElementById("error-deliveryTime" ).innerText = "Please enter Delivery Time";
+    flag = false;
+  } else if(delivery < 0){
+    document.getElementById("error-deliveryTime" ).innerText = "Delivery Time cannot be negative";
+    flag = false;
+  }
+
+  if(description === ""){
+    document.getElementById("error-description").innerText = "Please enter Description";
+    flag = false;
+  }
+
+
+  return flag;
+}
+
+
+
+function viewImage(event) {
+  const previewContainer = document.getElementById('imgViewContainer');
+  const files = event.target.files;
+
+  previewContainer.innerHTML = '';
+
+  for (let i = 0; i < files.length; i++) {
+    const reader = new FileReader();
+
+    reader.onload = (function(file) {
+      return function(e) {
+        const imgElement = document.createElement('img');
+        imgElement.src = e.target.result;
+        imgElement.style.maxWidth = '100px';
+        imgElement.style.marginRight = '10px'; 
+        imgElement.style.marginTop = '10px';
+        imgElement.style.marginRight = '10px';
+        previewContainer.appendChild(imgElement);
+      };
+    })(files[i]);
+
+    reader.readAsDataURL(files[i]);
+  }
+}
+
+
+
+document.getElementById('modalInputFile').addEventListener('change', function(event){
+  const previewContainer = document.getElementById('previewContainer');
+  const files = event.target.files;
+
+  previewContainer.innerHTML = '';
+
+  for (let i = 0; i < files.length; i++){
+    const reader = new FileReader();
+
+    reader.onload = (function(file) {
+      return function(e) {
+        const imgElement = document.createElement('img');
+        imgElement.src = e.target.result;
+        imgElement.style.maxWidth = '110px';
+        imgElement.style.maxHeight = '110px';
+        imgElement.style.marginTop = '10px';
+        imgElement.style.marginRight = '10px'; 
+        previewContainer.style.display = 'flex';
+
+        previewContainer.appendChild(imgElement);
+      };
+    })(files[i]);
+
+    reader.readAsDataURL(files[i]);
+  }
+});
+
+
+
+</script>
+
+<%- include('../adminLayouts/actionResponse.ejs') %>             
+<%- include('../adminLayouts/footer.ejs') %>

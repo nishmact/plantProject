@@ -1,0 +1,156 @@
+<%- include('../adminLayouts/header.ejs') %>
+
+<section>
+    <div class="container">
+      <div class="d-flex justify-content-between">
+          <h4 style="color: #0e382e;"><b>Banner Details</b></h4>
+          <button data-toggle="modal" data-target="#newcategory" type="button" class="btn add-new" style="background-color: #0e382e;color: white;border-radius: 6px;"><i class="fa fa-plus"></i> Add New Banner</button>
+      </div>
+        <table class="table mt-2">
+            <thead style="border-bottom: solid #0e382e;border-top: solid #0e382e ">
+              <tr style="color: #0e382e;font-weight: bolder;">
+                <th scope="col">No</th>
+                <th scope="col">Tittle</th>
+                <th scope="col">Image</th>
+                <th scope="col">Status</th>
+                <th scope="col">Actions</th>
+              </tr>
+            </thead>
+            <tbody>
+              <% let i=1%>
+              <% banners.forEach(banner=>{%>
+                 
+                  <tr >
+                      <td style="color: #0e382e"><%= i++ %></td>
+                      <td style="color: #0e382e"><%= banner.title %></td>
+                      <td style="color: #0e382e"> <img src="<%= banner.bannerImage %>" alt="Banner Image" style="max-width: 90px;"></td>
+                      <%if(banner.status===0){%>
+                        <td class="text-success">Listed</td>
+                      <%}else{%>
+                        <td class="text-danger">Unlisted</td>
+                      <%}%>                            
+                      <td style="color: #0e382e">
+                        <button data-toggle="modal" data-target="#edit<%=banner._id%>"><i class="fa-solid fa-pen" style="color: #0e382e;"></i></button>
+                        <%if(banner.status===0){%>
+                          <button data-toggle="modal" data-target="#delete<%= banner._id %>"><i class="fa-solid fa-ban" style="color: hsl(0, 75%, 46%);"></i></button>
+                        <%}else{%>
+                          <button data-toggle="modal" data-target="#delete<%= banner._id %>"><i class="fa-solid fa-ban" style="color: hsl(129, 75%, 46%);"></i></button>
+                        <%}%>
+                        
+                      </td>
+                      <div class="modal" id="delete<%= banner._id %>" role="dialog" aria-labelledby="exampleModalLabel" aria-hidden="true">
+                        <div class="modal-dialog" role="document">
+                          <div class="modal-content">
+                            <div class="modal-body">
+                              <%if(banner.status===0){%>
+                                <p class="text-danger text-center">Are sure to unlist the Banner?.</p>
+                              <%}else{%>
+                                <p class="text-danger text-center">Are sure to list the Banner?.</p>
+                              <%}%>                                    
+                            </div>
+                            <div class="modal-footer justify-content-center">
+                              <%if(banner.status===0){%>
+                                <a href="/admin/listBanner/<%= banner._id %>"><button type="button" class="btn btn-danger">Unlist category</button></a>
+                              <%}else{%>
+                                <a href="/admin/listBanner/<%= banner._id %>"><button type="button" class="btn btn-success">List category</button></a>
+                              <%}%> 
+                                                                  
+                              <button type="button" class="btn btn-primary" data-dismiss="modal">Close</button>
+                            </div>
+                          </div>
+                        </div>
+                      </div>
+                    </tr>
+                    <div class="modal" id="edit<%= banner._id %>" role="dialog" aria-labelledby="exampleModalLabel" aria-hidden="true" >
+                      <div class="modal-dialog" role="document">
+                        <div class="modal-content"  style="width: 100%px;">
+                          <div class="modal-body" >
+                            <div class="container mt-1" >
+                              <div class="container mt-4">
+                                <div class="row">
+                                  <div class="col-md-12">
+                                    <h2 class="text-center">Edit Banner</h2>
+                                    <form action="/admin/editBanner/<%=banner._id%>" method="post" enctype="multipart/form-data">
+                                      <label for="">Title</label>
+                                      <input type="text" name="title" class="form-control" value="<%=banner.title%>">
+                                      <label for="">Image</label>
+                                      <img src="<%= banner.bannerImage %>"  alt="" style="height: 50px;" class="d-block">
+                                      <input type="file" multiple name="bannerImage" class="form-control" >
+                                      <div class="text-center">
+                                        <button type="submit" class="btn btn-primary btn-lg mt-3">Submit</button>
+                                        <button type="button" class="btn btn-primary btn-lg mt-3" data-dismiss="modal">Close</button> 
+                                      </div>
+                                    </form>
+                                  </div>
+                                </div>
+                              </div>
+                            </div>
+                          </div>
+                        </div>
+                      </div>
+                    </div>
+              <%})%>                           
+          </tbody>
+          </table>
+           
+          <div class="modal" id="newcategory" role="dialog" aria-labelledby="exampleModalLabel" aria-hidden="true" >
+            <div class="modal-dialog" role="document">
+              <div class="modal-content"  style="width: 100%px;">
+                <div class="modal-body" >
+                  <div class="container mt-1" >
+                    <div class="container mt-4">
+                      <div class="row">
+                        <div class="col-md-12">
+                          <h2 class="text-center">Add new category</h2>
+                          <form action="/admin/addBanner" method="post" enctype="multipart/form-data">
+                            <label for="title">Title</label>
+                            <input type="text" name="title" id="title" class="form-control">
+                            <div class="mb-3">
+                                <label class="form-label" for="bannerImage">Image</label>
+                                <div id="previewContainer" class="row mb-4"  style="height: 100px; width: 100px;"></div>
+                                <input class="form-control" id="bannerImage" type="file" name="bannerImage" aria-describedby="emailHelp" onchange="previewImage()">
+                            </div>
+                            <div class="text-center">
+                                <button type="submit" class="btn btn-primary btn-lg mt-3">Submit</button>
+                                <button type="button" class="btn btn-primary btn-lg mt-3" data-dismiss="modal">Close</button>
+                            </div>
+                        </form>
+                        
+                        </div>
+                      </div>
+                    </div>
+                  </div>
+                </div>
+              </div>
+            </div>
+          </div>
+                        
+    </div>
+</section>
+
+
+<script>
+  function previewImage() {
+      var fileInput = document.getElementById('bannerImage');
+      var previewContainer = document.getElementById('previewContainer');
+      var previewImage = document.createElement('img');
+
+      previewContainer.innerHTML = '';
+      
+      if (fileInput.files && fileInput.files[0]) {
+          var reader = new FileReader();
+
+          reader.onload = function(e) {
+              previewImage.src = e.target.result;
+              previewImage.classList.add('img-fluid'); 
+          }
+          reader.readAsDataURL(fileInput.files[0]);
+          previewContainer.appendChild(previewImage);
+      }
+  }
+</script>
+
+
+
+<%- include('../adminLayouts/actionResponse.ejs') %>             
+<%- include('../adminLayouts/footer.ejs') %>

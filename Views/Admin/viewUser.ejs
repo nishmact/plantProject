@@ -1,0 +1,85 @@
+<%- include('../adminLayouts/header.ejs') %>
+
+<section>
+    <div class="container">
+      <div class="d-flex justify-content-between">
+          <h4 style="color: #0e382e;"><b>User Details</b></h4>
+      </div>
+        <table class="table mt-2">
+            <thead style="border-bottom: solid #0e382e;border-top: solid #0e382e ">
+              <tr style="color: #0e382e;font-weight: bolder;">
+                <th scope="col">No</th>
+                <th scope="col">Name</th>
+                <th scope="col">Email</th>
+                <th scope="col">Phone</th>
+                <th scope="col">Status</th>
+                <th scope="col">Actions</th>
+              </tr>
+            </thead>
+            <tbody>
+                <% let i=1%>
+                <% users.forEach(user=>{%>
+                    
+                    <tr >
+                        <td style="color: #0e382e"><%= i++ %></td>
+                        <td style="color: #0e382e"><%= user.name %></td>
+                        <td style="color: #0e382e"><%= user.email %></td>
+                        <td style="color: #0e382e"><%= user.mobile %></td>
+                        <%if(user.is_block===0){%>
+                          <td class="text-success">Active</td>
+                        <%}else{%>
+                          <td class="text-danger">Blocked</td>
+                        <%}%>                            
+                        <td style="color: #0e382e">
+                          <%if(user.is_block===0){%>
+                            <button data-toggle="modal" data-target="#delete<%= user._id %>"><i class="fa-solid fa-ban" style="color: hsl(0, 75%, 46%);"></i></button>
+                          <%}else{%>
+                            <button data-toggle="modal" data-target="#delete<%= user._id %>"><i class="fa-solid fa-ban" style="color: hsl(129, 75%, 46%);"></i></button>
+                          <%}%>
+                          
+                        </td>
+                       <div class="modal" id="delete<%= user._id %>" role="dialog" aria-labelledby="exampleModalLabel" aria-hidden="true">
+                          <div class="modal-dialog" role="document">
+                            <div class="modal-content">
+                              <div class="modal-body">
+                                <%if(user.is_block===0){%>
+                                  <p class="text-danger text-center">Are sure to block the user?.</p>
+                                <%}else{%>
+                                  <p class="text-danger text-center">Are sure to unblock the user?.</p>
+                                <%}%>                                    
+                              </div>
+                              <div class="modal-footer justify-content-center">
+                                <%if(user.is_block===0){%>
+                                  <a href="/admin/blockUser/<%= user._id %>"><button type="button" class="btn btn-danger">Block user</button></a>
+                                <%}else{%>
+                                  <a href="/admin/blockUser/<%= user._id %>"><button type="button" class="btn btn-success">Unblock user</button></a>
+                                <%}%> 
+                                                                    
+                                <button type="button" class="btn btn-primary" data-dismiss="modal">Close</button>
+                              </div>
+                            </div>
+                          </div>
+                        </div>
+                      </tr>
+                <%})%>
+                        
+            </tbody>
+          </table>
+          <div style="width: 100%; background-color: white; display: flex; justify-content: center; margin-top: 90px; height: 60px;">
+            <nav aria-label="Page navigation example" style="padding: 10px; margin-bottom: 0px;">
+                <ul class="pagination" >
+                    <li class="page-item"><a class="page-link" href="#" style="color: black;">Previous</a></li>
+                    <% for(let i = 1; i <=  totalPages; i++) { %>
+                        <li class="page-item">
+                            <a class="page-link" href="/admin/viewUser?page=<%= i %>" style="color: black;"><%= i %></a>
+                        </li>
+                    <% } %>
+                    <li class="page-item"><a class="page-link" href="#" style="color: black;">Next</a></li>
+                </ul>
+            </nav>
+        </div>      
+    </div>        
+</section>  
+
+<%- include('../adminLayouts/actionResponse.ejs') %>            
+<%- include('../adminLayouts/footer.ejs') %>

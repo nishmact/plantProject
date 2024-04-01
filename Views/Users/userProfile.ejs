@@ -1,0 +1,286 @@
+<%- include('../Layouts/header.ejs') %>
+
+<section style="background-color: #eee;">
+    <div class="container py-4" >
+      <div class="row">
+        <div class="col">
+          <nav aria-label="breadcrumb" class="bg-light rounded-3 p-1 mb-2">
+            <h2 class="text-center" style="color: #0e382c;font-weight:600 ">My profile</h2>
+          </nav>
+        </div>
+      </div>  
+      <div class="row">
+        <div class="col-lg-4">
+          <div class="card mb-2">
+            <div class="card-body text-center">
+              <img src="/image/profilepic.svg" alt="avatar"
+                class="rounded-circle img-fluid" style="width: 100px;">
+              <h5 class="my-3" id="profileName"><%=userData.name%></h5>
+              <p class="text-muted mb-1"><i class="fa-solid fa-envelope" style="color: #0e382c;"></i><%=userData.email%></p>
+            </div>
+          </div>
+          <div class="card mb-4 mb-lg-0">
+            <div class="card-body p-0">
+              <ul class="list-group list-group-flush rounded-3">
+                <li class="list-group-item d-flex justify-content-center align-items-center p-3">
+                  <a href="/profile" style="text-decoration: none;"><p class="mb-0" id="personalDetails">Profile Information</p></a>
+                </li>
+                <li class="list-group-item d-flex justify-content-center align-items-center p-3">
+                    <a href="/address" style="text-decoration: none;"><p class="mb-0"id="addressDetails">Manage Addresses</p></a>
+                </li>
+                <li class="list-group-item d-flex justify-content-center align-items-center p-3">
+                  <a href="/orders" style="text-decoration: none;"><p class="mb-0" id="orderDetails">My Orders</p></a>
+                </li>
+                <li class="list-group-item d-flex justify-content-center align-items-center p-3">
+                  <a href="/wishlist" style="text-decoration: none;"><p class="mb-0" id="orderDetails">My Wishlist</p></a>
+                </li>
+                <li class="list-group-item d-flex justify-content-center align-items-center p-3">
+                  <a href="/wallet" style="text-decoration: none;"><p class="mb-0" id="orderDetails">My Wallet</p></a>
+                </li>
+              </ul>
+            </div>
+          </div>
+        </div>
+        <div class="col-lg-8">
+          <div class="card mb-4">
+            <div class="card-body" id="personalDetailsBody">
+              <div class="row">
+                <div class="col-sm-2">
+                  <p class="mb-0">Full Name</p>
+                </div>
+                <div class="col-sm-10">
+                    <form id="nameEditForm">
+                        <div class="row">
+                            <div class="col-sm-9">
+                                <p id="userName" class="mb-0"><%=userData.name%></p>
+                                <input id="nameInput" class="d-none" type="text" name="name" value="<%=userData.name%>">
+                            </div>
+                            <div class="col-sm-3 d-flex justify-content-end">
+                                <button id="editButton" type="button" class="btn btn-primary btn-sm" style="padding: 5px 10px;border-radius: 2px;margin: 0 5px 5px 0">Edit</button>
+                                <button id="saveButton" type="submit" class="btn btn-primary btn-sm d-none" style="padding: 5px 10px;border-radius: 2px;margin: 0 5px 5px 0">Save</button>
+                                <button id="cancelButton" type="button" class="btn btn-secondary btn-sm d-none" style="padding: 5px 10px;border-radius: 2px;margin: 0 5px 5px 0">Cancel</button>
+                            </div>
+                        </div>
+                    </form>
+                </div>                
+              </div>
+              <hr>
+              <div class="row">
+                <div class="col-sm-2">
+                  <p class="mb-0">Password</p>
+                </div>
+                <div class="col-sm-10">
+                    <form id="passwordEditForm">
+                        <div class="row">
+                            <div class="col-sm-9">
+                                <p class="mb-0">************</p>
+                                <div class="row d-none" id="inputDiv">
+                                    <div class="col-sm-4 mb-1">
+                                        <input class="" type="password" name="password" placeholder="Enter current password" style="font-size: 12px;">
+                                    </div>
+                                    <div class="col-sm-4 mb-1">
+                                        <input class="" type="password" name="newPass" placeholder="Enter new password" style="font-size: 12px;">
+                                    </div>
+                                    <div class="col-sm-4 mb-1">
+                                        <input class="" type="password" name="confirmPass" placeholder="Confirm new password" style="font-size: 12px;">
+                                    </div>
+                                    <p class="text-center mt-2 text-danger" id="passMessage"></p>
+                                </div>
+                            </div>
+                            <div class="col-sm-3 d-flex justify-content-end align-items-start">
+                                <button type="button" id="editPasswordButton" class="btn btn-primary btn-sm" style="padding: 5px 10px;border-radius: 2px;margin: 0 5px 5px 0">Edit</button>
+                                <button type="submit" id="savePasswordButton" class="btn btn-primary btn-sm d-none" style="padding: 5px 10px;border-radius: 2px;margin: 0 5px 5px 0">Save</button>
+                                <button type="button" id="cancelPasswordButton" class="btn btn-secondary btn-sm d-none" style="padding: 5px 10px;border-radius: 2px;margin: 0 5px 5px 0">Cancel</button>
+                            </div>
+                        </div>
+                    </form>
+                    
+                </div>                
+              </div>
+              <hr>
+              <div class="row">
+                <div class="col-sm-2">
+                  <p class="mb-0">Mobile</p>
+                </div>
+                <div class="col-sm-10">
+                  <p class="text-muted mb-0"><%=userData.mobile%></p>
+                </div>
+              </div>
+              <hr>
+              <div class="row">
+                <div class="col-sm-2">
+                  <p class="mb-0">Referral Code</p>
+                </div>
+                <div class="col-sm-10">
+                  <p class="text-muted mb-0"><%=userData.referralCode%></p>
+                </div>
+              </div>
+            </div>
+          </div>
+        </div>
+      </div>
+    </div>    
+  </section>
+
+
+<script>
+
+const headerUsername = document.getElementById('headerUsername');
+const profileName = document.getElementById('profileName');
+const nameEditForm = document.getElementById('nameEditForm');
+const cancelButton = document.getElementById('cancelButton');
+const nameEditButton = nameEditForm.querySelector('button#editButton');
+const saveButton = nameEditForm.querySelector('button#saveButton');
+const nameText = nameEditForm.querySelector('p#userName');
+const nameInput = nameEditForm.querySelector('input#nameInput');
+
+nameEditButton.addEventListener('click', toggleEdit);
+cancelButton.addEventListener('click', cancelEdit);
+
+function toggleEdit() {
+    saveButton.classList.toggle("d-none");
+    cancelButton.classList.toggle("d-none");
+    nameEditButton.classList.toggle("d-none");
+    nameInput.classList.toggle("d-none");
+    nameText.classList.toggle("d-none");
+}
+
+function cancelEdit() {
+    toggleEdit(); // Hide save and cancel buttons, show edit button
+}
+
+nameEditForm.addEventListener('submit', submitNameChange);
+async function submitNameChange(event) {
+    event.preventDefault();
+    try {
+        const formData = new FormData(nameEditForm);
+        const response = await fetch('/profile', {
+            method: "POST",
+            body: formData
+        });
+        if (response.ok) {
+            console.log("success");
+            const result = await response.json();
+            if (result.name) {
+                saveButton.innerText = "Saved";
+                saveButton.disabled = true;
+                nameText.innerText = result.name;
+                profileName.innerText = result.name;
+                headerUsername.innerText = result.name;
+                setTimeout(() => {
+                    saveButton.innerText = "Save";
+                    saveButton.disabled = false;
+                    toggleEdit(); // Hide save and cancel buttons, show edit button
+                }, 500);
+            }
+        }
+    } catch (err) {
+        console.log(err.message);
+    }
+}
+
+
+
+
+
+
+////////////////////////////////////////////////////////////////////////////////
+
+
+const passwordEditForm = document.getElementById('passwordEditForm');
+const passPtag = passwordEditForm.querySelector('p');
+const passEditButton = passwordEditForm.querySelector('button#editPasswordButton');
+const passSaveButton = passwordEditForm.querySelector('button#savePasswordButton');
+const passCancelButton = passwordEditForm.querySelector('button#cancelPasswordButton');
+const inputDiv = document.getElementById('inputDiv');
+const passMessage = document.getElementById('passMessage');
+
+passEditButton.addEventListener('click', togglePasswordEdit);
+passCancelButton.addEventListener('click', cancelPasswordEdit);
+
+function togglePasswordEdit() {
+    passPtag.classList.add('d-none');
+    inputDiv.classList.remove('d-none');
+    passEditButton.classList.add('d-none');
+    passSaveButton.classList.remove('d-none');
+    passCancelButton.classList.remove('d-none');
+}
+
+function cancelPasswordEdit() {
+    passPtag.classList.remove('d-none');
+    inputDiv.classList.add('d-none');
+    passEditButton.classList.remove('d-none');
+    passSaveButton.classList.add('d-none');
+    passCancelButton.classList.add('d-none');
+}
+
+function validate() {
+    const valid=true
+      const currentPassInput = passwordEditForm.querySelector('input[name="password"]').value;
+    const newPassInput= passwordEditForm.querySelector('input[name="newPass"]').value;
+    const confirmPassInput = passwordEditForm.querySelector('input[name="confirmPass"]').value;
+      const symbolRegex = /[!@#$%^&*()_+\-=[\]{};':"\\|,.<>/?]/;
+      const numberRegex = /\d/;  
+      const hasSymbol = symbolRegex.test(newPassInput);
+      const hasNumber = numberRegex.test(newPassInput);
+      if(currentPassInput===""){
+        passMessage.innerText="Plesae Enter the current password"
+        valid=false
+      }else if(newPassInput===""){
+        passMessage.innerText="Plesae Enter the new password"
+        valid=false
+      }else if(newPassInput.length<5||newPassInput.length>15){
+        passMessage.innerText="Password must be a minimum of 6 and maximum 15 charecters"
+        valid=false
+      }else if(!hasSymbol||!hasNumber){
+        passMessage.innerText="Password must contain at least 1 symbol and 1 numberr"
+        valid=false
+      }else if(confirmPassInput==""){
+        passMessage.innerText="Please re enter the password"
+        valid=false
+      }else if(newPassInput!==confirmPassInput){
+        passMessage.innerText="Entered confirm password is not matching"
+        valid=false
+      }
+      return valid
+}
+
+passwordEditForm.addEventListener('submit', submitPassChange);
+async function submitPassChange(event) {
+  event.preventDefault();
+  const status = validate();
+  if (status) {
+    try {
+      const formData = new FormData(passwordEditForm);
+      const response = await fetch('/profile', {
+        method: "POST",
+        body: formData
+      });
+      if (response.ok) {
+        const result = await response.json();
+        if (result.message == "failed") {
+          passMessage.innerHTML = 'Entered Password is incorrect<span><a href="/admin/forgetPassword">click here to reset password</a></span>';
+        } else if (result.message == "Success") {
+          passMessage.innerHTML = "";
+          passSaveButton.innerText = "Saved";
+          passSaveButton.disabled = true;
+          setTimeout(() => {
+            cancelPasswordEdit(); // Hide save and cancel buttons, show edit button
+            passSaveButton.innerText = "Save";
+            passSaveButton.disabled = false;
+            clearFormFields(passwordEditForm);
+          }, 500);
+        }
+      }
+    } catch (err) {
+      console.log(err.message);
+    }
+  }
+}
+
+
+</script>
+
+
+ 
+  <%- include('../Layouts/footer.ejs') %>

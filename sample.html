@@ -1,0 +1,28 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Dropdown Example</title>
+  <!-- Bootstrap CSS -->
+  <link rel="stylesheet" href="https://stackpath.bootstrapcdn.com/bootstrap/4.3.1/css/bootstrap.min.css">
+</head>
+<body>
+
+  <div class="dropdown">
+    <a class="nav-link dropdown-toggle" href="#" id="userDropdown" role="button" data-toggle="dropdown" aria-haspopup="true" aria-expanded="false" style="color: white; font-weight: 900;">
+      <span id="headerUsername">Username</span>
+      <img src="/image/user.svg" alt="User Image">
+    </a>
+    <div class="dropdown-menu" aria-labelledby="userDropdown">
+      <a class="dropdown-item" href="/userLogout">Logout</a>
+      <a class="dropdown-item" href="/profile">Profile</a>
+      <a class="dropdown-item" href="/admin/login">Admin Login</a>
+    </div>
+  </div>
+
+  <!-- Bootstrap JS and jQuery -->
+  <script src="https://code.jquery.com/jquery-3.6.0.min.js"></script>
+  <script src="https://stackpath.bootstrapcdn.com/bootstrap/4.3.1/js/bootstrap.min.js"></script>
+</body>
+</html>

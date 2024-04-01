@@ -1,0 +1,45 @@
+<%- include('../adminLayouts/header.ejs') %>
+
+<h2 style="font-weight: bold;">Best Selling Categories</h2>
+<canvas id="horizontalBarCategories" width="100" height="200"></canvas> 
+
+<script>
+    const bestCategories = <%- JSON.stringify(bestCategories) %>;
+
+    const categoryLabels = [];
+    const totalOrders = [];
+
+    bestCategories.forEach(category => {
+        categoryLabels.push(category.category);
+        totalOrders.push(category.totalOrders);
+    });
+
+    const ctxCategories = document.getElementById('horizontalBarCategories').getContext('2d');
+    const myChartCategories = new Chart(ctxCategories, {
+        type: 'horizontalBar',
+        data: {
+            labels: categoryLabels,
+            datasets: [{
+                label: 'Total Orders',
+                data: totalOrders,
+                backgroundColor: 'rgba(75, 192, 192, 0.5)',
+                borderColor: 'rgba(75, 192, 192, 1)',
+            }]
+        },
+        options: {
+            responsive: true,
+            maintainAspectRatio: false,
+            scales: {
+                x: {
+                    beginAtZero: true,
+                    ticks: {
+                        stepSize: 1
+                    }
+                }
+            }
+        }
+    });
+</script>
+
+<%- include('../adminLayouts/actionResponse.ejs') %>             
+<%- include('../adminLayouts/footer.ejs') %>

@@ -1,0 +1,154 @@
+<%- include('../Layouts/header.ejs') %>
+<style>
+    .col-md-10 .product-item {
+        margin-left: 70px; 
+    }
+    
+</style>
+
+<div class="container-fluid product">
+    <div class=" py-5">
+        <div class="row">
+           
+            <div class="col-md-2" style="background-color: white;">
+                <div class="left-side-content">
+                    <h4 style="margin-left: 5px; font-weight: bold; margin-top: 20px;">Filters</h4>
+                    <hr>
+                    <h5 style="font-weight: bold;">Categories</h5>
+                    <div style="height: 200px;">
+                        <% categoriesNames.forEach(category => { %>
+                            <div class="form-check">
+                                <input class="form-check-input category-radio" type="radio" data-category-id="<%= category.id %>" name="categoryRadio" id="<%= category.id %>" value="<%= category.name %>" > 
+                                <label class="form-check-label" for="<%= category.id %>" style="cursor: pointer;">
+                                    <%= category.name %>
+                                </label>
+                            </div>
+                        <% }); %>
+
+                    </div>
+                    <hr>
+                    <h5 style="font-weight: bold;">Price</h5>
+                    <div style="height: 200px;">
+            
+                        <% const priceRanges = [
+                        { value: '0-199', label: '₹0 to ₹199' },
+                        { value: '200-399', label: '₹200 to ₹399' },
+                        { value: '400-599', label: '₹400 to ₹599' },
+                        { value: '600-plus', label: '₹600 +' }
+                    ]; %>
+                    
+                    <% priceRanges.forEach((range, index) => { %>
+                        <div class="form-check">
+                            <input class="form-check-input price-radio" type="radio" id="radio<%= index + 1 %>" name="priceRadio" value="<%= range.value %>" >
+                            <label class="form-check-label" for="radio<%= index + 1 %>" style="cursor: pointer;">
+                                <p style="margin-bottom: 2px;"><%= range.label %></p>
+                            </label>
+                        </div>
+                    <% }); %>
+            
+                    </div>
+                </div>
+            </div>
+            
+            
+            <div class="col-md-10" >
+                <div style="width: 100%; background-color: white; display: flex;   height: 50px; margin-bottom: 50px;">
+                    <h4  style="margin-bottom: 80px; padding: 13px; font-weight: bold; font-size: 20px;">Sort By</h4>
+                    <a href="#" class="sort-link" data-sort="highToLow"><p style="padding: 13px;">Price-High to Low</p></a>
+                    <a href="#" class="sort-link" data-sort="lowToHigh"><p style="padding: 13px;">Price-Low to High</p></a>
+                </div>
+
+                
+                <div class="row">
+                    <% productData.forEach(product => { %>
+                    <% if (product.status == 0) { %>
+                    <div class="col-md-4 wow fadeInUp" data-wow-delay="0.5s" >
+                        
+                        <div class="d-block product-item rounded position-relative" style="margin-right: 2px;">
+                            <a href="/productDetails/<%=product._id%>">
+                                <img style="width: 300px; height: 250px; " src="<%=product.image[0]%>" alt="images">
+                            </a>
+
+                            <% if (userData && userData.wishlist.includes(product._id)) { %>
+                            <button id="removeWishlist_<%= product._id %>" class="love-button position-absolute top-0 start-0 translate-middle btn btn-danger rounded-circle border border-light" style="background-color: white; width: 40px; height: 40px;">
+                                <i id="heartIcon_<%= product._id %>" class="bi bi-heart-fill position-absolute top-50 start-50 translate-middle red-heart" style="font-size: 16px;"></i>
+                            </button>
+
+                            <% } else { %>
+                            <button id="wishlistButton_<%= product._id %>" class="love-button position-absolute top-0 start-0 translate-middle btn btn-danger rounded-circle border border-light" style="background-color: white; width: 40px; height: 40px;">
+                                <i class="bi bi-heart-fill position-absolute top-50 start-50 translate-middle" style="font-size: 16px; color: grey;"></i>
+                            </button>
+                            <% } %>
+
+                            <a href="/productDetails/<%=product._id%>">
+                                <div class="bg-white shadow-sm text-center p-2 position-relative mt-n5 mx-4" style="width: 300px;">
+                                    <h4 class="text-primary"><%=product.name%></h4>
+                                    <h5 style="font-weight: bold;">₹<%=product.discountedPrice%></h5>
+                                </div>
+                            </a>
+                        </div>
+                    </div>
+                    <% } %>
+                    <% }) %>
+                </div>
+
+                <!-- Pagination Section -->
+                <div style="width: 100%; background-color: white; display: flex; justify-content: center; margin-top: 20px; height: 60px;">
+                    <nav aria-label="Page navigation example" style="padding: 10px; margin-bottom: 0px;">
+                        <ul class="pagination">
+                            <li class="page-item"><a class="page-link" href="#" style="color: black;">Previous</a></li>
+                            <% for (let i = 1; i <= totalPages; i++) { %>
+                            <li class="page-item">
+                                <a class="page-link" href="/allProducts?page=<%= i %>" style="color: black;"><%= i %></a>
+                            </li>
+                            <% } %>
+                            <li class="page-item"><a class="page-link" href="#" style="color: black;">Next</a></li>
+                        </ul>
+                    </nav>
+                </div>
+            </div>
+        </div>
+    </div>
+</div>
+
+
+    
+<script>
+
+    document.querySelectorAll('.form-check-input').forEach(input => {
+        input.addEventListener('click', async function(event) {
+            if (input.classList.contains('price-radio')) {
+                const priceRange = document.querySelector('input[name="priceRadio"]:checked').value;
+                const url = `/products?priceRange=${priceRange}`; 
+                console.log("price", priceRange);
+                window.location.href = url;
+            } else if (input.classList.contains('category-radio')) {
+                const selectedCategory = event.target.value;
+                const url = `/products?search=${selectedCategory}`;
+                window.location.href = url;
+            } 
+        });
+    });
+     
+    document.querySelectorAll('.sort-link').forEach(link => {
+        link.addEventListener('click', function(event) {
+            event.preventDefault();
+            const sortOption = this.dataset.sort;
+            const currentUrl = window.location.href;
+            const url = new URL(currentUrl);
+            url.searchParams.set('sort', sortOption);
+            window.location.href = url.toString();
+        });
+    });
+    
+    </script>
+    
+
+<style>
+   
+    .red-heart {
+        color: red !important; 
+    }
+</style>
+
+<%- include('../Layouts/footer.ejs') %> 
