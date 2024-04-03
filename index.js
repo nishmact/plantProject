@@ -37,6 +37,10 @@ app.use('/admin',adminRoute)
 const errorHandler = require("./middleware/errorHandler");
 app.use(errorHandler);
 
+app.get("*", (req, res) => {
+  res.status(404), res.render("404", { err: "404" });
+});
+
 
 
 
