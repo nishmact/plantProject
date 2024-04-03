@@ -28,7 +28,7 @@ const userLogin = (req, res) => {
   try {
     res.render("userLogin", { message: "", userData: "" });
   } catch (err) {
-    console.log(err.message);
+    next(err);
   }
 };
 
@@ -148,7 +148,7 @@ const verifyForgetPassword = async (req, res) => {
       }
     }
   } catch (err) {
-    console.log(err.message);
+    next(err);
   }
 };
 
@@ -248,7 +248,7 @@ const submitUserSignup = async (req, res) => {
       }
     }
   } catch (error) {
-    console.log(error.message); 
+    next(err);
   }
 };
 
@@ -288,7 +288,7 @@ const home = async (req, res) => {
 
     res.render("home", { userData, productData, totalPages, bannerData });
   } catch (err) {
-    console.log(err.message);
+    next(err);
   }
 };
 
@@ -307,7 +307,7 @@ const productDetails = async (req, res) => {
     });
     res.render("productDetails", { userData, productData, cartItem });
   } catch (err) {
-    console.log(err.message);
+    next(err);
     return res.status(400).send('Invalid product ID');
   }
 };
@@ -367,7 +367,7 @@ const allProducts = async (req, res) => {
     });
 
   } catch (err) {
-    console.log(err.message);
+    next(err);
     res.status(500).send("Internal Server Error");
   }
 };
@@ -406,7 +406,7 @@ const profileEdit = async (req, res) => {
       }
     }
   } catch (err) {
-    console.log(err.message);
+    next(err);
   }
 };
 
@@ -473,7 +473,7 @@ const saveAddress = async (req, res) => {
       res.json({ addresses: userData.address });
     }
   } catch (err) {
-    console.log(err.message);
+    next(err);
   }
 };
 
@@ -486,7 +486,7 @@ const wishlist = async (req, res) => {
     const wishlist = await user.findOne({ _id: userId }).populate("wishlist");
     res.render("userWishlist", { userData, wishlist });
   } catch (err) {
-    console.log(err);
+    next(err);
   }
 };
 
@@ -506,7 +506,7 @@ const addtoWishlist = async (req, res) => {
     console.log("Wishlist updated successfully");
     res.status(200).json({ message: "Wishlist updated successfully" });
   } catch (err) {
-    console.error("Error updating wishlist:", err);
+    next(err);
     res.status(500).json({ error: "Internal server error" });
   }
 };
@@ -520,7 +520,7 @@ const removeWishlist = async (req, res) => {
     await users.save();
     res.redirect("/wishlist");
   } catch (err) {
-    console.log(err);
+    next(err);
   }
 };
 
@@ -562,7 +562,7 @@ const categories = async (req, res) => {
 
     res.render("categories", { userData, categories });
   } catch (err) {
-    console.error(err);
+    next(err);
     res.status(500).send("Internal Server Error");
   }
 };
